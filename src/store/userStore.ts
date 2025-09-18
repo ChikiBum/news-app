@@ -1,13 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-};
+import type { User } from "../types";
 
 type UserState = {
+  isAuthenticated: boolean;
   user: User | null;
   setUser: (user: User | null) => void;
 };
@@ -15,6 +11,7 @@ type UserState = {
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
+      isAuthenticated: true,
       user: null,
       setUser: (user) => set({ user }),
     }),

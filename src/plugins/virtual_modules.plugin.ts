@@ -1,7 +1,7 @@
-// declare module "virtual:plugins";
+
 
 const modules: string[] = [
-
+// declare module "virtual:plugins";
 ]; 
 
 function virtualModules() {

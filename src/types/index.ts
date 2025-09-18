@@ -13,6 +13,7 @@ export type GetNewsFilters = {
 export type User = {
   id: number;
   username: string;
+  name: string;
   email: string;
   password: string;
 };
@@ -21,10 +22,7 @@ export type Users = User[];
 
 export type Token = string | null;
 
-export type AuthResponse = {
-  token: Token;
-  user: User;
-};
+
 export type LoginRequest = {
   username: string;
   password: string;
@@ -39,17 +37,13 @@ export type NewsRequest = {
   token: Token;
 }; 
 
-export type RegisterResponse = AuthResponse;
-export type LoginResponse = AuthResponse;
-export type ErrorResponse = {
-  message: string;
-};
 export type GetUsersFilters = {
   limit: number;
   page: number;
 };
 
 export type AuthState = {
+  isAuthenticated: boolean;
   token: Token | null;
   user: User | null;
   setToken: (token: Token) => void;

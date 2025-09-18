@@ -1,9 +1,17 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { register } from "../api/mockApi";
+import { useNavigate } from "react-router-dom";
+import { login, register } from "../api/mockApi";
 import AuthForm from "../components/AuthForm";
 import { useAuthStore } from "../store/authStore";
+import { useUserStore } from "../store/userStore";
+import type { User } from "../types";
 import { loginSchema } from "../validation/loginSchema";
+import { registerSchema } from "../validation/registerSchema";
+
+interface LoginFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
+
+interface RegisterFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 
 export default function LoginPage() {
 	const [form, setForm] = useState({ username: "", password: "" });
@@ -18,18 +26,21 @@ export default function LoginPage() {
 
 	const setToken = useAuthStore((state) => state.setToken);
 	const setUser = useAuthStore((state) => state.setUser);
+	const setUserStore = useUserStore((state) => state.setUser);
+	// const setAuthenticated = useUserStore((state) => state.isAuthenticated);
 
-	interface LoginFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
-
-	interface RegisterFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
-
-	const loginMutation = useMutation({
-		mutationFn: login,
+	const loginMutation = useMutation<
+		User,
+		Error,
+		{ username: string; password: string }
+	>({
+		mutationFn: (credentials) => login(credentials),
 		onSuccess: (data) => {
-			const typedData = data as { token: string };
-			setToken(typedData.token);
-			const userData = JSON.parse(atob(typedData.token));
+			const token = btoa(JSON.stringify(data));
+			const userData = data;
+			setToken(token);
 			setUser(userData);
+			setUserStore(userData);
 		},
 		onError: (error) => {
 			setServerError(error.message);
@@ -37,13 +48,13 @@ export default function LoginPage() {
 		},
 	});
 
-	const registerMutation = useMutation({
+	const registerMutation = useMutation<User, Error, Omit<User, "id">>({
 		mutationFn: register,
 		onSuccess: (data) => {
-			const typedData = data as { token: string };
-			setToken(typedData.token);
-			const userData = JSON.parse(atob(typedData.token));
-			setUser(userData);
+			const token = btoa(JSON.stringify(data));
+			setToken(token);
+			setUser(data);
+			setUserStore(data);
 			setShowRegister(false);
 			setServerError("");
 		},
@@ -55,6 +66,7 @@ export default function LoginPage() {
 	function handleLoginChange(name: string, value: string) {
 		setForm((f) => ({ ...f, [name]: value }));
 	}
+	const navigate = useNavigate();
 
 	function handleLoginSubmit(e: LoginFormSubmitEvent) {
 		e.preventDefault();
@@ -65,6 +77,7 @@ export default function LoginPage() {
 			return;
 		}
 		loginMutation.mutate(form);
+		navigate("/news");
 	}
 
 	function handleRegisterChange(name: string, value: string) {
@@ -74,7 +87,13 @@ export default function LoginPage() {
 	function handleRegisterSubmit(e: RegisterFormSubmitEvent) {
 		e.preventDefault();
 		setServerError("");
+		const result = registerSchema.safeParse(registerForm);
+		if (!result.success) {
+			setServerError(result.error.message);
+			return;
+		}
 		registerMutation.mutate(registerForm);
+		navigate("/news");
 	}
 
 	return (
@@ -82,29 +101,31 @@ export default function LoginPage() {
 			className="p-6 border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700
 			flex flex-col center items-center"
 		>
-			<AuthForm
-				title="Вхід"
-				fields={[
-					{
-						name: "username",
-						type: "text",
-						placeholder: "Логін",
-						required: true,
-					},
-					{
-						name: "password",
-						type: "password",
-						placeholder: "Пароль",
-						required: true,
-					},
-				]}
-				values={form}
-				onChange={handleLoginChange}
-				onSubmit={handleLoginSubmit}
-				submitText="Увійти"
-				disabled={loginMutation.isPending}
-				error={serverError && !showRegister ? serverError : ""}
-			/>
+			{!showRegister && (
+				<AuthForm
+					title="Вхід"
+					fields={[
+						{
+							name: "username",
+							type: "text",
+							placeholder: "Логін",
+							required: true,
+						},
+						{
+							name: "password",
+							type: "password",
+							placeholder: "Пароль",
+							required: true,
+						},
+					]}
+					values={form}
+					onChange={handleLoginChange}
+					onSubmit={handleLoginSubmit}
+					submitText="Увійти"
+					disabled={loginMutation.isPending}
+					error={serverError && !showRegister ? serverError : ""}
+				/>
+			)}
 			{showRegister && (
 				<AuthForm
 					title="Реєстрація"
@@ -139,10 +160,4 @@ export default function LoginPage() {
 			)}
 		</div>
 	);
-}
-function login(
-	variables: void,
-	context: MutationFunctionContext,
-): Promise<unknown> {
-	throw new Error("Function not implemented.");
 }

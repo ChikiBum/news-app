@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchNews } from "../api/mockApi";
+import { fetchNews } from "../api/mockNewsApi";
 import { useAuthStore } from "../store/authStore";
 
 export default function NewsPage() {
