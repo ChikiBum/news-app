@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom"; // Add this import if ThemeToggle exists
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import "virtual:plugins";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import ErrorPage from "./pages/ErrorPage";

@@ -1,6 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchNews } from "../api/mockApi";
-import { useAuthStore } from "../store/authStore";
 
 export default function NewsPage() {
 	const token = useAuthStore((state) => state.token);

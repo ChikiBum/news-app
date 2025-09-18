@@ -1,4 +1,11 @@
-const modules: string[] = []; // Тут має бути масив назв модулів, наприклад: ['module1', 'module2']
+// declare module "virtual:plugins";
+
+const modules: string[] = [
+'userStore',
+'authStore',
+'loginSchema',
+'mockApi'
+]; 
 
 function virtualModules() {
   return {
