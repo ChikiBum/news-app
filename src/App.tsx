@@ -1,35 +1,31 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { useEffect } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom"; // Add this import if ThemeToggle exists
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import ErrorPage from "./pages/ErrorPage";
+import LoginPage from "./pages/LoginPage";
+import NewsDetailPage from "./pages/NewsDetailPage";
+import NewsFeedPage from "./pages/NewsFeedPage";
 
 function App() {
-  const [count, setCount] = useState(0);
+	useEffect(() => {
+		localStorage.clear();
+	}, []);
 
-  return (
-    <>
-      <div className="bg-red-500 p-4 mb-4 rounded-md shadow-md flex justify-center gap-4">
-        <a href="https://vite.dev" target="_blank" rel="noopener">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noopener">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1 className="underline">Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  );
+	return (
+		<Router>
+			<Header />
+			<div className="flex flex-col items-center justify-center min-w-screen sm h-[70vh] bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+				<Routes>
+					<Route path="/" element={<LoginPage />} />
+					<Route path="/news" element={<NewsFeedPage />} />
+					<Route path="/news/:id" element={<NewsDetailPage />} />
+					<Route path="*" element={<ErrorPage />} />
+				</Routes>
+			</div>
+			<Footer />
+		</Router>
+	);
 }
 
 export default App;
