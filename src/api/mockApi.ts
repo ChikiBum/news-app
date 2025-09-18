@@ -4,7 +4,7 @@ import { addUser, findUser, isUsernameTaken } from "./userStorage";
 export function login({ username, password }: LoginRequest) {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
-			const user = findUser(username, password);
+			const user = findUser({ username, password });
 			if (user) {
 				const token = btoa(
 					JSON.stringify({
@@ -52,7 +52,7 @@ export function register({ username, email, password,  }: RegisterRequest) {
 }
 
 
-export function fetchNews(token: NewsRequest["token"], filters?: GetNewsFilters) {
+export function fetchNews(token: NewsRequest["token"], _filters?: GetNewsFilters) {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
 			if (!token) {
