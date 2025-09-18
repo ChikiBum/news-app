@@ -1,10 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "../api/mockApi";
 import AuthForm from "../components/AuthForm";
 import { useAuthStore } from "../store/authStore";
-import { useUserStore } from "../store/userStore";
 import type { User } from "../types";
 import { loginSchema } from "../validation/loginSchema";
 import { registerSchema } from "../validation/registerSchema";
@@ -26,8 +25,15 @@ export default function LoginPage() {
 
 	const setToken = useAuthStore((state) => state.setToken);
 	const setUser = useAuthStore((state) => state.setUser);
-	const setUserStore = useUserStore((state) => state.setUser);
-	// const setAuthenticated = useUserStore((state) => state.isAuthenticated);
+
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate("/news");
+		}
+	}, [isAuthenticated, navigate]);
 
 	const loginMutation = useMutation<
 		User,
@@ -40,7 +46,6 @@ export default function LoginPage() {
 			const userData = data;
 			setToken(token);
 			setUser(userData);
-			setUserStore(userData);
 		},
 		onError: (error) => {
 			setServerError(error.message);
@@ -54,7 +59,6 @@ export default function LoginPage() {
 			const token = btoa(JSON.stringify(data));
 			setToken(token);
 			setUser(data);
-			setUserStore(data);
 			setShowRegister(false);
 			setServerError("");
 		},
@@ -66,7 +70,6 @@ export default function LoginPage() {
 	function handleLoginChange(name: string, value: string) {
 		setForm((f) => ({ ...f, [name]: value }));
 	}
-	const navigate = useNavigate();
 
 	function handleLoginSubmit(e: LoginFormSubmitEvent) {
 		e.preventDefault();
@@ -77,7 +80,6 @@ export default function LoginPage() {
 			return;
 		}
 		loginMutation.mutate(form);
-		navigate("/news");
 	}
 
 	function handleRegisterChange(name: string, value: string) {
@@ -93,7 +95,6 @@ export default function LoginPage() {
 			return;
 		}
 		registerMutation.mutate(registerForm);
-		navigate("/news");
 	}
 
 	return (

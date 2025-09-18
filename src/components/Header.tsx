@@ -14,6 +14,7 @@ export default function Header() {
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const logout = useAuthStore((state) => state.logout);
 	const navigate = useNavigate();
+	const user = useAuthStore((state) => state.user);
 
 	const handleLogout = () => {
 		logout();
@@ -21,7 +22,7 @@ export default function Header() {
 	};
 
 	return (
-		<header className="h-[10vh] bg-white p-6 mb-8">
+		<header className="h-[10vh] bg-white p-6 mb-8 ">
 			<div className="flex items-center justify-between text-xl font-bold text-gray-800 text-center">
 				{info}
 			</div>
@@ -50,6 +51,11 @@ export default function Header() {
 					</button>
 				)}
 			</nav>
+			{isAuthenticated && (
+				<div className="text-gray-800 font-medium ml-4 flex justify-end ">
+					{user?.username ? `Вітаю, ${user.username}!` : "Вітаю, Гість!"}
+				</div>
+			)}
 		</header>
 	);
 }

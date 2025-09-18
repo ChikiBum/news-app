@@ -4,8 +4,6 @@ import { useAuthStore } from "../store/authStore";
 
 export default function NewsPage() {
 	const token = useAuthStore((state) => state.token);
-	const user = useAuthStore((state) => state.user);
-	const logout = useAuthStore((state) => state.logout);
 
 	const { data, error, isLoading } = useQuery({
 		queryKey: ["news", token],
@@ -23,12 +21,6 @@ export default function NewsPage() {
 				borderRadius: 8,
 			}}
 		>
-			<div style={{ marginBottom: 16 }}>
-				<span>Вітаю, {user?.username}!</span>
-				<button type="button" style={{ float: "right" }} onClick={logout}>
-					Вийти
-				</button>
-			</div>
 			<h2>Новини</h2>
 			{isLoading && <div>Завантаження...</div>}
 			{error && <div style={{ color: "red" }}>Помилка: {error.message}</div>}
