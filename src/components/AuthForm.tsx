@@ -1,6 +1,5 @@
 import type { AuthFormProps } from "../types";
 
-// add tailwind styles dark styles for form
 export default function AuthForm({
 	title,
 	fields,

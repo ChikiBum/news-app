@@ -1,10 +1,7 @@
 // declare module "virtual:plugins";
 
 const modules: string[] = [
-'userStore',
-'authStore',
-'loginSchema',
-'mockApi'
+
 ]; 
 
 function virtualModules() {

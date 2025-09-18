@@ -1,4 +1,4 @@
-import type { GetNewsFilters, LoginRequest, NewsFeed, NewsRequest, RegisterRequest } from "../types";
+import type { GetNewsFilters, LoginRequest, NewsFeed, NewsRequest, RegisterRequest } from "../../types";
 import { addUser, findUser, isUsernameTaken } from "./userStorage";
 
 export function login({ username, password }: LoginRequest) {

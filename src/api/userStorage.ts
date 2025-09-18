@@ -1,6 +1,6 @@
 const LOCAL_STORAGE_USERS_KEY = import.meta.env.VITE_LOCAL_STORAGE_USERS_KEY;
 
-import type { LoginRequest, User, Users } from "../types";
+import type { LoginRequest, User, Users } from "../../types";
 
 export function getAllUsers() {
 	const raw: string | null = localStorage.getItem(LOCAL_STORAGE_USERS_KEY);
