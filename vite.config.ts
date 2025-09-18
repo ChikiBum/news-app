@@ -6,18 +6,18 @@ import checker from "vite-plugin-checker";
 import viteCompression from "vite-plugin-compression";
 import Inspect from "vite-plugin-inspect";
 import svgr from "vite-plugin-svgr";
-import virtual from "vite-plugin-virtual";
+import virtualModules from "./src/plugins/virtual_modules.plugin"; // <-- імпорт вашого плагіна
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [
-		react(),
-		svgr(),
-		checker({ typescript: true }),
-		viteCompression(),
-		Inspect(),
-		visualizer(),
-		virtual({}),
-		tailwindcss(),
-	],
+  plugins: [
+    react(),
+    svgr(),
+    checker({ typescript: true }),
+    viteCompression(),
+    Inspect(),
+    visualizer(),
+    virtualModules(), 
+    tailwindcss(),
+  ],
 });

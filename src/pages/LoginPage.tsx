@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { login, register } from "../api/mockApi";
+import { register } from "../api/mockApi";
 import AuthForm from "../components/AuthForm";
 import { useAuthStore } from "../store/authStore";
 import { loginSchema } from "../validation/loginSchema";
@@ -139,4 +139,10 @@ export default function LoginPage() {
 			)}
 		</div>
 	);
+}
+function login(
+	variables: void,
+	context: MutationFunctionContext,
+): Promise<unknown> {
+	throw new Error("Function not implemented.");
 }
