@@ -1,31 +1,45 @@
 import { useQuery } from "@tanstack/react-query";
-import { getNews } from "../api/news";
+import { fetchNews } from "../api/mockApi";
+import { useAuthStore } from "../store/authStore";
 
-type NewsItem = {
-	id: number;
-	title: string;
-};
+export default function NewsPage() {
+	const token = useAuthStore((state) => state.token);
+	const user = useAuthStore((state) => state.user);
+	const logout = useAuthStore((state) => state.logout);
 
-function NewsFeedPage() {
-	const { data, isLoading, error } = useQuery<NewsItem[]>({
-		queryKey: ["test-news"],
-		queryFn: async () => {
-			return await getNews();
-		},
+	const { data, error, isLoading } = useQuery({
+		queryKey: ["news", token],
+		queryFn: () => fetchNews(token),
+		enabled: !!token,
 	});
 
-	if (isLoading) return <div>Завантаження...</div>;
-	if (error) return <div>Сталася помилка!</div>;
-
 	return (
-		<div>
-			<h1>Стрічка новин</h1>
+		<div
+			style={{
+				maxWidth: 500,
+				margin: "40px auto",
+				padding: 24,
+				border: "1px solid #ccc",
+				borderRadius: 8,
+			}}
+		>
+			<div style={{ marginBottom: 16 }}>
+				<span>Вітаю, {user?.username}!</span>
+				<button type="button" style={{ float: "right" }} onClick={logout}>
+					Вийти
+				</button>
+			</div>
+			<h2>Новини</h2>
+			{isLoading && <div>Завантаження...</div>}
+			{error && <div style={{ color: "red" }}>Помилка: {error.message}</div>}
 			<ul>
-				{data?.map((news: NewsItem) => (
-					<li key={news.id}>{news.title}</li>
+				{(Array.isArray(data) ? data : []).map((news) => (
+					<li key={news.id} style={{ marginBottom: 16 }}>
+						<strong>{news.title}</strong>
+						<div>{news.content}</div>
+					</li>
 				))}
 			</ul>
 		</div>
 	);
 }
-export default NewsFeedPage;
