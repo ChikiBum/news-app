@@ -1,0 +1,38 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+jobs:
+  biome-lint:
+    name: Biome lint PR check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Biome
+        run: npm install --save-dev @biomejs/biome
+      - name: Run Biome lint
+        run: npx biome lint .
+
+  deploy-vercel:
+    name: Deploy to Vercel
+    needs: biome-lint
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ p6tmSyFKsrwYYLP583HLmmxM }}
+          vercel-args: '--prod'
+          # vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          # vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
