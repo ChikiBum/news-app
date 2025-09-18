@@ -15,6 +15,7 @@ interface RegisterFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 export default function LoginPage() {
 	const [form, setForm] = useState({ username: "", password: "" });
 	const [serverError, setServerError] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 	const [showRegister, setShowRegister] = useState(false);
 	const [registerForm, setRegisterForm] = useState({
 		username: "",
@@ -41,21 +42,30 @@ export default function LoginPage() {
 		{ username: string; password: string }
 	>({
 		mutationFn: (credentials) => login(credentials),
+		onMutate: () => {
+			setIsLoading(true);
+		},
 		onSuccess: (data) => {
 			const token = btoa(JSON.stringify(data));
 			const userData = data;
 			setToken(token);
 			setUser(userData);
+			setIsLoading(false);
 		},
 		onError: (error) => {
 			setServerError(error.message);
 			setShowRegister(true);
+			setIsLoading(false);
 		},
 	});
 
 	const registerMutation = useMutation<User, Error, Omit<User, "id">>({
 		mutationFn: register,
+		onMutate: () => {
+			setIsLoading(true);
+		},
 		onSuccess: (data) => {
+			setIsLoading(false);
 			const token = btoa(JSON.stringify(data));
 			setToken(token);
 			setUser(data);
@@ -64,6 +74,7 @@ export default function LoginPage() {
 		},
 		onError: (error) => {
 			setServerError(error.message);
+			setIsLoading(false);
 		},
 	});
 
@@ -104,7 +115,7 @@ export default function LoginPage() {
 		>
 			{!showRegister && (
 				<AuthForm
-					title="Вхід"
+					title={isLoading ? "Завантаження..." : "Вхід"}
 					fields={[
 						{
 							name: "username",
@@ -122,14 +133,14 @@ export default function LoginPage() {
 					values={form}
 					onChange={handleLoginChange}
 					onSubmit={handleLoginSubmit}
-					submitText="Увійти"
+					submitText={isLoading ? "Завантаження..." : "Увійти"}
 					disabled={loginMutation.isPending}
 					error={serverError && !showRegister ? serverError : ""}
 				/>
 			)}
 			{showRegister && (
 				<AuthForm
-					title="Реєстрація"
+					title={isLoading ? "Завантаження..." : "Реєстрація"}
 					fields={[
 						{
 							name: "username",
@@ -154,7 +165,7 @@ export default function LoginPage() {
 					values={registerForm}
 					onChange={handleRegisterChange}
 					onSubmit={handleRegisterSubmit}
-					submitText="Зареєструватись"
+					submitText={isLoading ? "Завантаження..." : "Зареєструватися"}
 					disabled={registerMutation.isPending}
 					error={serverError && showRegister ? serverError : ""}
 				/>
