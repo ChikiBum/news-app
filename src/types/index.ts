@@ -5,9 +5,9 @@ export type NewsItem = {
 };
 export type NewsFeed = NewsItem[];
 
-export type GetNewsFilters = {
-	limit: number;
-	page: number;
+export type GetNewsFilters = Record<string, never> | {
+  limit: number;
+  page: number;
 };
 
 export type User = {
