@@ -13,7 +13,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 		}),
 	setUser: (user) => set({ user }),
 	login: async (email: string, password: string) => {
-		const user = await mockLogin(email, password);
+		const user = await mockLogin({ username: email, password });
 		set({
 			user,
 			token: "mock-token",
