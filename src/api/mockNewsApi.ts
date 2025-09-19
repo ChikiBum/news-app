@@ -1,6 +1,7 @@
 import type { GetNewsFilters, NewsFeed, NewsRequest } from "../types";
 
 export function fetchNews(token: NewsRequest["token"], filters?: GetNewsFilters) {
+	filters = filters || {};
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
 			if (!token) {

@@ -5,7 +5,7 @@ export type NewsItem = {
 };
 export type NewsFeed = NewsItem[];
 
-export type GetNewsFilters = {
+export type GetNewsFilters = {} | {
 	limit: number;
 	page: number;
 };
