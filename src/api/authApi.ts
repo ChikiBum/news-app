@@ -20,7 +20,6 @@ export async function register({ username, email, password }: RegisterRequest): 
 }
 
 export async function login({ email, password }: LoginRequest): Promise<LoginResponse & { token: string }> {
-  console.log(' route/auth/login ', `${API_URL}:${API_PORT}/auth/login`);
   const res = await fetch(`${API_URL}:${API_PORT}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -32,5 +31,7 @@ export async function login({ email, password }: LoginRequest): Promise<LoginRes
     throw new Error(error.message || "Login failed");
   }
 
-  return await res.json();
+  const data = await res.json();
+
+  return data;
 }

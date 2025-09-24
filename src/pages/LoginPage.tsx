@@ -11,15 +11,15 @@ import type {
 	RegisterRequest,
 	RegisterResponse,
 } from "../types";
-import { loginSchema } from "../validation/loginSchema";
-import { registerSchema } from "../validation/registerSchema";
+import { loginValidationSchema } from "../validation/loginSchema";
+import { registerValidationSchema } from "../validation/registerSchema";
 
 interface LoginFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 
 interface RegisterFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 
 export default function LoginPage() {
-	const [form, setForm] = useState({ email: "", password: "" });
+	const [loginForm, setLoginForm] = useState({ email: "testuser1@example.com", password: "YourStrongPassword" });
 	const [serverError, setServerError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [showRegister, setShowRegister] = useState(false);
@@ -62,7 +62,7 @@ export default function LoginPage() {
 			setUser({
 				id: data.id,
 				email: data.email,
-				username: data.username ?? ""
+				username: data.username ?? "",
 			});
 		},
 		onError: (error) => {
@@ -92,7 +92,7 @@ export default function LoginPage() {
 			setUser({
 				id: data.id,
 				email: data.email,
-				username: registerForm.username, 
+				username: registerForm.username,
 			});
 			setShowRegister(false);
 			setServerError("");
@@ -104,18 +104,18 @@ export default function LoginPage() {
 	});
 
 	function handleLoginChange(name: string, value: string) {
-		setForm((f) => ({ ...f, [name]: value }));
+		setLoginForm((f) => ({ ...f, [name]: value }));
 	}
 
 	function handleLoginSubmit(e: LoginFormSubmitEvent) {
 		e.preventDefault();
 		setServerError("");
-		const result = loginSchema.safeParse(form);
+		const result = loginValidationSchema.safeParse(loginForm);
 		if (!result.success) {
 			setServerError(result.error.message);
 			return;
 		}
-		loginMutation.mutate(form);
+		loginMutation.mutate(loginForm);
 	}
 
 	function handleRegisterChange(name: string, value: string) {
@@ -125,7 +125,7 @@ export default function LoginPage() {
 	function handleRegisterSubmit(e: RegisterFormSubmitEvent) {
 		e.preventDefault();
 		setServerError("");
-		const result = registerSchema.safeParse(registerForm);
+		const result = registerValidationSchema.safeParse(registerForm);
 		if (!result.success) {
 			setServerError(result.error.message);
 			return;
@@ -155,7 +155,7 @@ export default function LoginPage() {
 							required: true,
 						},
 					]}
-					values={form}
+					values={loginForm}
 					onChange={handleLoginChange}
 					onSubmit={handleLoginSubmit}
 					submitText={isLoading ? "Завантаження..." : "Увійти"}

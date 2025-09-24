@@ -24,3 +24,19 @@ export async function fetchAllNews(): Promise<NewsItem[]> {
 	const data = await res.json();
 	return data.news;
 }
+
+export async function fetchNewsById(id: string) {
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No auth token");
+
+  const res = await fetch(`${API_URL}:${API_PORT}/news/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) {
+    throw new Error("Не вдалося завантажити новину");
+  }
+  return await res.json();
+}
