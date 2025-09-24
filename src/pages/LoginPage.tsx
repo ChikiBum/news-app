@@ -180,9 +180,9 @@ export default function LoginPage() {
 					onChange={handleRegisterChange}
 					onSubmit={handleRegisterSubmit}
 					submitText={
-						registerMutation.isLoading ? "Завантаження..." : "Зареєструватися"
+						registerMutation.isPending ? "Завантаження..." : "Зареєструватися"
 					}
-					disabled={registerMutation.isLoading}
+					disabled={registerMutation.isPending}
 					error={serverError && showRegister ? serverError : ""}
 				/>
 			)}
