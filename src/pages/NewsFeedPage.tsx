@@ -1,34 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchNews } from "../api/mockNewsApi";
-import { useAuthStore } from "../store/authStore";
+import { fetchAllNews } from "../api/newsApi";
+import type { NewsItem } from "../types";
 
-export default function NewsPage() {
-	const token = useAuthStore((state) => state.token);
-
-	const { data, error, isLoading } = useQuery({
-		queryKey: ["news", token],
-		queryFn: () => fetchNews(token),
-		enabled: !!token,
+export default function NewsFeedPage() {
+	const {
+		data: news,
+		isLoading,
+		isError,
+		error,
+	} = useQuery<NewsItem[], Error>({
+		queryKey: ["news"],
+		queryFn: fetchAllNews,
 	});
 
+	if (isLoading) return <div>Loading...</div>;
+	if (isError) return <div>Error: {error.message}</div>;
+
 	return (
-		<div
-			style={{
-				maxWidth: 500,
-				margin: "40px auto",
-				padding: 24,
-				border: "1px solid #ccc",
-				borderRadius: 8,
-			}}
-		>
-			<h2>Новини</h2>
-			{isLoading && <div>Завантаження...</div>}
-			{error && <div style={{ color: "red" }}>Помилка: {error.message}</div>}
+		<div>
+			<h1>Новини</h1>
 			<ul>
-				{(Array.isArray(data) ? data : []).map((news) => (
-					<li key={news.id} style={{ marginBottom: 16 }}>
-						<strong>{news.title}</strong>
-						<div>{news.content}</div>
+				{news?.map((item) => (
+					<li key={item.id}>
+						<a href={item.url} target="_blank" rel="noopener noreferrer">
+							{item.site}
+						</a>
+						<div>Створено: {new Date(item.createdAt).toLocaleString()}</div>
 					</li>
 				))}
 			</ul>

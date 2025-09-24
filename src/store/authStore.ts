@@ -1,37 +1,39 @@
+import Cookies from "js-cookie";
 import { create } from "zustand";
-import { login as mockLogin, register as mockRegister } from "../api/mockApi";
-import type { AuthState, User } from "../types";
+import { login as apiLogin, register as apiRegister } from "../api/authApi";
+import type {
+	AuthState,
+	LoginRequest,
+	RegisterRequest,
+} from "../types";
 
 export const useAuthStore = create<AuthState>((set) => ({
 	isAuthenticated: false,
-	token: null,
 	user: null,
+
 	setToken: (token) =>
 		set({
-			token,
 			isAuthenticated: !!token,
 		}),
+
 	setUser: (user) => set({ user }),
-	login: async (email: string, password: string) => {
-		const user = await mockLogin({ username: email, password });
-		set({
-			user,
-			token: "mock-token",
-			isAuthenticated: true,
-		});
+
+	login: async (credentials: LoginRequest) => {
+		const data = await apiLogin(credentials); 
+		return data;
 	},
-	register: async (userData: Omit<User, "id">) => {
-			const user = await mockRegister(userData);
-			set({
-				user,
-				token: "mock-token",
-				isAuthenticated: true,
-			});
+
+	register: async (userData: RegisterRequest) => {
+		const data = await apiRegister(userData); // повертає { id, email, token }
+		return data;
 	},
-	logout: () =>
+
+	logout: () => {
+		Cookies.remove("token");
 		set({
 			token: null,
 			user: null,
 			isAuthenticated: false,
-		}),
+		});
+	},
 }));

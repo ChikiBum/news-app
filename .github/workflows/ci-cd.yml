@@ -20,6 +20,8 @@ jobs:
         run: npm install --save-dev @biomejs/biome
       - name: Run Biome lint
         run: npx biome lint .
+      - name: Build TypeScript
+        run: npm run build
 
   deploy-vercel:
     name: Deploy to Vercel
