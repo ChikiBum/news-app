@@ -15,24 +15,24 @@ import { loginValidationSchema } from "../validation/loginSchema";
 import { registerValidationSchema } from "../validation/registerSchema";
 
 interface LoginFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
-
 interface RegisterFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 
 export default function LoginPage() {
-	const [loginForm, setLoginForm] = useState({ email: "testuser1@example.com", password: "YourStrongPassword" });
-	const [serverError, setServerError] = useState("");
-	const [isLoading, setIsLoading] = useState(false);
-	const [showRegister, setShowRegister] = useState(false);
+	const [loginForm, setLoginForm] = useState({
+		email: "testuser1@example.com",
+		password: "YourStrongPassword",
+	});
 	const [registerForm, setRegisterForm] = useState({
 		username: "",
 		email: "",
 		password: "",
 		name: "",
 	});
+	const [serverError, setServerError] = useState("");
+	const [showRegister, setShowRegister] = useState(false);
 
 	const setToken = useAuthStore((state) => state.setToken);
 	const setUser = useAuthStore((state) => state.setUser);
-
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const navigate = useNavigate();
 
@@ -48,11 +48,7 @@ export default function LoginPage() {
 		LoginRequest
 	>({
 		mutationFn: login,
-		onMutate: () => {
-			setIsLoading(true);
-		},
 		onSuccess: (data) => {
-			setIsLoading(false);
 			Cookies.set("token", data.token, {
 				expires: 7,
 				secure: true,
@@ -68,7 +64,6 @@ export default function LoginPage() {
 		onError: (error) => {
 			setServerError(error.message);
 			setShowRegister(true);
-			setIsLoading(false);
 		},
 	});
 
@@ -78,11 +73,7 @@ export default function LoginPage() {
 		RegisterRequest
 	>({
 		mutationFn: register,
-		onMutate: () => {
-			setIsLoading(true);
-		},
 		onSuccess: (data) => {
-			setIsLoading(false);
 			Cookies.set("token", data.token, {
 				expires: 7,
 				secure: true,
@@ -99,7 +90,6 @@ export default function LoginPage() {
 		},
 		onError: (error) => {
 			setServerError(error.message);
-			setIsLoading(false);
 		},
 	});
 
@@ -136,11 +126,11 @@ export default function LoginPage() {
 	return (
 		<div
 			className="p-6 border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700
-			flex flex-col center items-center"
+      flex flex-col center items-center"
 		>
 			{!showRegister && (
 				<AuthForm
-					title={isLoading ? "Завантаження..." : "Вхід"}
+					title={loginMutation.isPending ? "Завантаження..." : "Вхід"}
 					fields={[
 						{
 							name: "email",
@@ -158,14 +148,14 @@ export default function LoginPage() {
 					values={loginForm}
 					onChange={handleLoginChange}
 					onSubmit={handleLoginSubmit}
-					submitText={isLoading ? "Завантаження..." : "Увійти"}
+					submitText={loginMutation.isPending ? "Завантаження..." : "Увійти"}
 					disabled={loginMutation.isPending}
 					error={serverError && !showRegister ? serverError : ""}
 				/>
 			)}
 			{showRegister && (
 				<AuthForm
-					title={isLoading ? "Завантаження..." : "Реєстрація"}
+					title={registerMutation.isPending ? "Завантаження..." : "Реєстрація"}
 					fields={[
 						{
 							name: "username",
@@ -189,8 +179,10 @@ export default function LoginPage() {
 					values={registerForm}
 					onChange={handleRegisterChange}
 					onSubmit={handleRegisterSubmit}
-					submitText={isLoading ? "Завантаження..." : "Зареєструватися"}
-					disabled={registerMutation.isPending}
+					submitText={
+						registerMutation.isLoading ? "Завантаження..." : "Зареєструватися"
+					}
+					disabled={registerMutation.isLoading}
 					error={serverError && showRegister ? serverError : ""}
 				/>
 			)}
