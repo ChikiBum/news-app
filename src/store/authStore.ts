@@ -24,14 +24,13 @@ export const useAuthStore = create<AuthState>((set) => ({
 	},
 
 	register: async (userData: RegisterRequest) => {
-		const data = await apiRegister(userData); // повертає { id, email, token }
+		const data = await apiRegister(userData); 
 		return data;
 	},
 
 	logout: () => {
 		Cookies.remove("token");
 		set({
-			token: null,
 			user: null,
 			isAuthenticated: false,
 		});
