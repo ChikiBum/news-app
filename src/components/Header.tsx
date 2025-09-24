@@ -16,7 +16,6 @@ export default function Header() {
 	const navigate = useNavigate();
 	const user = useAuthStore((state) => state.user);
 
-
 	const handleLogout = () => {
 		logout();
 		navigate("/");

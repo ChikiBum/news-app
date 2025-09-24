@@ -13,7 +13,8 @@ export default function NewsDetailPage() {
 		error,
 	} = useQuery({
 		queryKey: ["news", id],
-		queryFn: () => fetchNewsById(id!),
+		queryFn: () =>
+			id ? fetchNewsById(id) : Promise.reject(new Error("No id")),
 		enabled: !!id,
 	});
 
