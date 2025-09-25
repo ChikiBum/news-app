@@ -19,6 +19,7 @@ interface LoginFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 interface RegisterFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 
 export default function LoginPage() {
+	
 	const [loginForm, setLoginForm] = useState({
 		email: "testuser1@example.com",
 		password: "YourStrongPassword",
@@ -132,10 +133,7 @@ export default function LoginPage() {
 						<span className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-4">
 							Реклама
 						</span>
-						<div
-							id="ads-wrapper"
-							className="w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800"
-						></div>
+						<div className="ads-wrapper w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800"></div>
 					</div>
 				</div>
 
@@ -213,9 +211,7 @@ export default function LoginPage() {
 						<span className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-4">
 							Реклама
 						</span>
-						<div
-							id="ads-wrapper"
-							className="w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800"
+						<div className="ads-wrapper w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800"
 						></div>
 					</div>
 				</div>

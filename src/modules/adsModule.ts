@@ -10,19 +10,19 @@ function generateUniqueAdId(): string {
 
 const processedElements = new Set<Element>();
 
-function debugLog(...args: any[]) {
+function debugLog(...args: unknown[]) {
 	if (localStorage.getItem("adsDebug") === "true") {
 		console.log(...args);
 	}
 }
 
-function debugWarn(...args: any[]) {
+function debugWarn(...args: unknown[]) {
 	if (localStorage.getItem("adsDebug") === "true") {
 		console.warn(...args);
 	}
 }
 
-function debugError(...args: any[]) {
+function debugError(...args: unknown[]) {
 	if (localStorage.getItem("adsDebug") === "true") {
 		console.error(...args);
 	}
@@ -34,7 +34,7 @@ if (localStorage.getItem("adsDebug") === "true") {
 	console.log("💡 Чтобы отключить: localStorage.removeItem('adsDebug')");
 }
 
-function appendScriptWithSrc(src: any) {
+function appendScriptWithSrc(src: string) {
 	debugLog("🔄 Начинаем загрузку скрипта:", src);
 	return new Promise((resolve, reject) => {
 		const script = document.createElement("script");
@@ -75,7 +75,7 @@ function loadGoogleScript() {
 
 function loadPbjsScript() {
 	debugLog("📊 Загружаем Prebid.js скрипт...");
-	const adsContainers = document.querySelectorAll("#ads-wrapper");
+	const adsContainers = document.querySelectorAll(".ads-wrapper");
 	debugLog("📊 Найдено контейнеров для рекламы:", adsContainers.length);
 
 	const adUnitsData = Array.from(adsContainers).map((container) => {
@@ -269,7 +269,7 @@ function runAllAdsSequence() {
 				debugError("Сообщение ошибки:", err.message);
 				debugError("Полный объект ошибки:", err);
 
-				if (err.message && err.message.includes("googletagservices.com")) {
+				if (err.message?.includes("googletagservices.com")) {
 					debugError("🔧 Проблема: Не удалось загрузить Google Tag Services");
 					debugError(
 						"💡 Возможные причины: блокировка рекламы, проблемы с сетью",
