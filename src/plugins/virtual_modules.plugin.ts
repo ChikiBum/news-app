@@ -1,7 +1,10 @@
-const modules: string[] = [
-	// declare module "virtual:plugins";
-];
-function virtualModules() {
+function virtualModules(enabledModules?: string) {
+	const modules = enabledModules 
+		? enabledModules.split(',').map(m => m.trim()).filter(Boolean)
+		: [];
+	
+	console.log(' Virtual Modules Plugin - modules:', modules);
+	
 	return {
 		name: "virtual-modules",
 		resolveId(id: string) {
@@ -12,9 +15,15 @@ function virtualModules() {
 		},
 		load(id: string) {
 			if (id === "virtual:plugins") {
-				return modules
-					.map((m: string) => `import './src/modules/${m}.ts';`)
+				console.log('📦 Loading virtual:plugins with modules:', modules);
+				
+				const imports = modules
+					.map((m: string) => `import '/src/modules/${m}.ts';`)
 					.join("\n");
+					
+				console.log('📝 Generated imports:', imports);
+				
+				return imports;
 			}
 			return null;
 		},

@@ -6,12 +6,9 @@ import ErrorPage from "./pages/ErrorPage";
 import LoginPage from "./pages/LoginPage";
 import NewsDetailPage from "./pages/NewsDetailPage";
 import NewsFeedPage from "./pages/NewsFeedPage";
+import "virtual:plugins";
 
 function App() {
-	// useEffect(() => {
-	// 	localStorage.clear();
-	// }, []);
-
 	return (
 		<Router>
 			<Header />

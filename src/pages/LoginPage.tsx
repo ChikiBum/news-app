@@ -13,6 +13,7 @@ import type {
 } from "../types";
 import { loginValidationSchema } from "../validation/loginSchema";
 import { registerValidationSchema } from "../validation/registerSchema";
+import "virtual:plugins";
 
 interface LoginFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 interface RegisterFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
@@ -124,11 +125,21 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div
-			className="p-6 border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700
-      flex flex-col center items-center"
-		>
-			{!showRegister && (
+		<div className="w-full h-full p-4">
+
+			<div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-6 h-full min-h-[500px]">
+			
+				<div className="flex-shrink-0 w-full max-w-sm lg:max-w-xs">
+					<div className="w-full border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700 p-[50px] flex flex-col items-center justify-start min-h-[350px]">
+						<span className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-4">Реклама</span>
+						<div id="ads-wrapper" className="w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800">
+						</div>
+					</div>
+				</div>
+
+				<div className="flex-shrink-0 w-full max-w-md">
+					<div className="p-6 border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700">
+						{!showRegister && (
 				<AuthForm
 					title={loginMutation.isPending ? "Завантаження..." : "Вхід"}
 					fields={[
@@ -186,6 +197,19 @@ export default function LoginPage() {
 					error={serverError && showRegister ? serverError : ""}
 				/>
 			)}
+			
+					</div>
+				</div>
+
+				<div className="flex-shrink-0 w-full max-w-sm lg:max-w-xs">
+					<div className="w-full border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700 p-[50px] flex flex-col items-center justify-start min-h-[350px]">
+						<span className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-4">Реклама</span>
+						<div id="ads-wrapper" className="w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800">
+						</div>
+					</div>
+				</div>
+
+			</div>
 		</div>
 	);
 }
