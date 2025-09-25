@@ -126,89 +126,99 @@ export default function LoginPage() {
 
 	return (
 		<div className="w-full h-full p-4">
-
 			<div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-6 h-full min-h-[500px]">
-			
 				<div className="flex-shrink-0 w-full max-w-sm lg:max-w-xs">
 					<div className="w-full border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700 p-[50px] flex flex-col items-center justify-start min-h-[350px]">
-						<span className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-4">Реклама</span>
-						<div id="ads-wrapper" className="w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800">
-						</div>
+						<span className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-4">
+							Реклама
+						</span>
+						<div
+							id="ads-wrapper"
+							className="w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800"
+						></div>
 					</div>
 				</div>
 
 				<div className="flex-shrink-0 w-full max-w-md">
 					<div className="p-6 border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700">
 						{!showRegister && (
-				<AuthForm
-					title={loginMutation.isPending ? "Завантаження..." : "Вхід"}
-					fields={[
-						{
-							name: "email",
-							type: "email",
-							placeholder: "Email",
-							required: true,
-						},
-						{
-							name: "password",
-							type: "password",
-							placeholder: "Пароль",
-							required: true,
-						},
-					]}
-					values={loginForm}
-					onChange={handleLoginChange}
-					onSubmit={handleLoginSubmit}
-					submitText={loginMutation.isPending ? "Завантаження..." : "Увійти"}
-					disabled={loginMutation.isPending}
-					error={serverError && !showRegister ? serverError : ""}
-				/>
-			)}
-			{showRegister && (
-				<AuthForm
-					title={registerMutation.isPending ? "Завантаження..." : "Реєстрація"}
-					fields={[
-						{
-							name: "username",
-							type: "text",
-							placeholder: "Логін",
-							required: true,
-						},
-						{
-							name: "email",
-							type: "email",
-							placeholder: "Email",
-							required: true,
-						},
-						{
-							name: "password",
-							type: "password",
-							placeholder: "Пароль",
-							required: true,
-						},
-					]}
-					values={registerForm}
-					onChange={handleRegisterChange}
-					onSubmit={handleRegisterSubmit}
-					submitText={
-						registerMutation.isPending ? "Завантаження..." : "Зареєструватися"
-					}
-					disabled={registerMutation.isPending}
-					error={serverError && showRegister ? serverError : ""}
-				/>
-			)}
-			
+							<AuthForm
+								title={loginMutation.isPending ? "Завантаження..." : "Вхід"}
+								fields={[
+									{
+										name: "email",
+										type: "email",
+										placeholder: "Email",
+										required: true,
+									},
+									{
+										name: "password",
+										type: "password",
+										placeholder: "Пароль",
+										required: true,
+									},
+								]}
+								values={loginForm}
+								onChange={handleLoginChange}
+								onSubmit={handleLoginSubmit}
+								submitText={
+									loginMutation.isPending ? "Завантаження..." : "Увійти"
+								}
+								disabled={loginMutation.isPending}
+								error={serverError && !showRegister ? serverError : ""}
+							/>
+						)}
+						{showRegister && (
+							<AuthForm
+								title={
+									registerMutation.isPending ? "Завантаження..." : "Реєстрація"
+								}
+								fields={[
+									{
+										name: "username",
+										type: "text",
+										placeholder: "Логін",
+										required: true,
+									},
+									{
+										name: "email",
+										type: "email",
+										placeholder: "Email",
+										required: true,
+									},
+									{
+										name: "password",
+										type: "password",
+										placeholder: "Пароль",
+										required: true,
+									},
+								]}
+								values={registerForm}
+								onChange={handleRegisterChange}
+								onSubmit={handleRegisterSubmit}
+								submitText={
+									registerMutation.isPending
+										? "Завантаження..."
+										: "Зареєструватися"
+								}
+								disabled={registerMutation.isPending}
+								error={serverError && showRegister ? serverError : ""}
+							/>
+						)}
 					</div>
 				</div>
 
 				<div className="flex-shrink-0 w-full max-w-sm lg:max-w-xs">
 					<div className="w-full border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700 p-[50px] flex flex-col items-center justify-start min-h-[350px]">
-						<span className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-4">Реклама</span>
-						<div id="ads-wrapper" className="w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800">
-						</div>
+						<span className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-4">
+							Реклама
+						</span>
+						<div
+							id="ads-wrapper"
+							className="w-full h-[250px] border border-gray-200 dark:border-gray-600 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800"
+						></div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	);
