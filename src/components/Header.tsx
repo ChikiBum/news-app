@@ -22,38 +22,40 @@ export default function Header() {
 	};
 
 	return (
-		<header className="h-[10vh] bg-white p-6 mb-8 ">
-			<div className="flex items-center justify-between text-xl font-bold text-gray-800 text-center">
-				{info}
-			</div>
-			<nav className="flex gap-6">
-				<Link
-					to="/news"
-					className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
-				>
-					News
-				</Link>
-				{!isAuthenticated && (
+		<header className="h-[10vh] bg-white px-6 py-3 mb-8 flex flex-col justify-between shadow">
+			<div className="flex items-center justify-between">
+				<div className="text-xl font-bold text-gray-800">{info}</div>
+				<nav className="flex gap-6 items-center">
 					<Link
-						to="/"
+						to="/news"
 						className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
 					>
-						Login
+						News
 					</Link>
-				)}
-				{isAuthenticated && (
-					<button
-						type="button"
-						onClick={handleLogout}
-						className="text-blue-600 hover:text-blue-800 font-medium transition-colors bg-transparent border-none cursor-pointer"
-					>
-						Logout
-					</button>
-				)}
-			</nav>
+					{!isAuthenticated && (
+						<Link
+							to="/"
+							className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+						>
+							Login
+						</Link>
+					)}
+					{isAuthenticated && (
+						<button
+							type="button"
+							onClick={handleLogout}
+							className="text-blue-600 hover:text-blue-800 font-medium transition-colors bg-transparent border-none cursor-pointer"
+						>
+							Logout
+						</button>
+					)}
+				</nav>
+			</div>
 			{isAuthenticated && (
-				<div className="text-gray-800 font-medium ml-4 flex justify-end ">
-					{user?.username ? `Вітаю, ${user.username}!` : "Вітаю, Гість!"}
+				<div className="text-gray-800 font-medium flex justify-end mt-2">
+					{user?.username
+						? `Вітаю, ${user.username}!`
+						: "Вітаю, Користувач без імені!"}
 				</div>
 			)}
 		</header>

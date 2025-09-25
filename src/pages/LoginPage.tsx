@@ -1,32 +1,38 @@
 import { useMutation } from "@tanstack/react-query";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, register } from "../api/mockApi";
+import { login, register } from "../api/authApi";
 import AuthForm from "../components/AuthForm";
 import { useAuthStore } from "../store/authStore";
-import type { User } from "../types";
-import { loginSchema } from "../validation/loginSchema";
-import { registerSchema } from "../validation/registerSchema";
+import type {
+	LoginRequest,
+	LoginResponse,
+	RegisterRequest,
+	RegisterResponse,
+} from "../types";
+import { loginValidationSchema } from "../validation/loginSchema";
+import { registerValidationSchema } from "../validation/registerSchema";
 
 interface LoginFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
-
 interface RegisterFormSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 
 export default function LoginPage() {
-	const [form, setForm] = useState({ username: "", password: "" });
-	const [serverError, setServerError] = useState("");
-	const [isLoading, setIsLoading] = useState(false);
-	const [showRegister, setShowRegister] = useState(false);
+	const [loginForm, setLoginForm] = useState({
+		email: "testuser1@example.com",
+		password: "YourStrongPassword",
+	});
 	const [registerForm, setRegisterForm] = useState({
 		username: "",
 		email: "",
 		password: "",
 		name: "",
 	});
+	const [serverError, setServerError] = useState("");
+	const [showRegister, setShowRegister] = useState(false);
 
 	const setToken = useAuthStore((state) => state.setToken);
 	const setUser = useAuthStore((state) => state.setUser);
-
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const navigate = useNavigate();
 
@@ -37,60 +43,69 @@ export default function LoginPage() {
 	}, [isAuthenticated, navigate]);
 
 	const loginMutation = useMutation<
-		User,
+		LoginResponse & { token: string },
 		Error,
-		{ username: string; password: string }
+		LoginRequest
 	>({
-		mutationFn: (credentials) => login(credentials),
-		onMutate: () => {
-			setIsLoading(true);
-		},
+		mutationFn: login,
 		onSuccess: (data) => {
-			const token = btoa(JSON.stringify(data));
-			const userData = data;
-			setToken(token);
-			setUser(userData);
-			setIsLoading(false);
+			Cookies.set("token", data.token, {
+				expires: 7,
+				secure: true,
+				sameSite: "strict",
+			});
+			setToken(data.token);
+			setUser({
+				id: data.id,
+				email: data.email,
+				username: data.username ?? "",
+			});
 		},
 		onError: (error) => {
 			setServerError(error.message);
 			setShowRegister(true);
-			setIsLoading(false);
 		},
 	});
 
-	const registerMutation = useMutation<User, Error, Omit<User, "id">>({
+	const registerMutation = useMutation<
+		RegisterResponse,
+		Error,
+		RegisterRequest
+	>({
 		mutationFn: register,
-		onMutate: () => {
-			setIsLoading(true);
-		},
 		onSuccess: (data) => {
-			setIsLoading(false);
-			const token = btoa(JSON.stringify(data));
-			setToken(token);
-			setUser(data);
+			Cookies.set("token", data.token, {
+				expires: 7,
+				secure: true,
+				sameSite: "strict",
+			});
+			setToken(data.token);
+			setUser({
+				id: data.id,
+				email: data.email,
+				username: registerForm.username,
+			});
 			setShowRegister(false);
 			setServerError("");
 		},
 		onError: (error) => {
 			setServerError(error.message);
-			setIsLoading(false);
 		},
 	});
 
 	function handleLoginChange(name: string, value: string) {
-		setForm((f) => ({ ...f, [name]: value }));
+		setLoginForm((f) => ({ ...f, [name]: value }));
 	}
 
 	function handleLoginSubmit(e: LoginFormSubmitEvent) {
 		e.preventDefault();
 		setServerError("");
-		const result = loginSchema.safeParse(form);
+		const result = loginValidationSchema.safeParse(loginForm);
 		if (!result.success) {
 			setServerError(result.error.message);
 			return;
 		}
-		loginMutation.mutate(form);
+		loginMutation.mutate(loginForm);
 	}
 
 	function handleRegisterChange(name: string, value: string) {
@@ -100,7 +115,7 @@ export default function LoginPage() {
 	function handleRegisterSubmit(e: RegisterFormSubmitEvent) {
 		e.preventDefault();
 		setServerError("");
-		const result = registerSchema.safeParse(registerForm);
+		const result = registerValidationSchema.safeParse(registerForm);
 		if (!result.success) {
 			setServerError(result.error.message);
 			return;
@@ -111,16 +126,16 @@ export default function LoginPage() {
 	return (
 		<div
 			className="p-6 border rounded-lg shadow-lg bg-white dark:bg-gray-900 dark:border-gray-700
-			flex flex-col center items-center"
+      flex flex-col center items-center"
 		>
 			{!showRegister && (
 				<AuthForm
-					title={isLoading ? "Завантаження..." : "Вхід"}
+					title={loginMutation.isPending ? "Завантаження..." : "Вхід"}
 					fields={[
 						{
-							name: "username",
-							type: "text",
-							placeholder: "Логін",
+							name: "email",
+							type: "email",
+							placeholder: "Email",
 							required: true,
 						},
 						{
@@ -130,17 +145,17 @@ export default function LoginPage() {
 							required: true,
 						},
 					]}
-					values={form}
+					values={loginForm}
 					onChange={handleLoginChange}
 					onSubmit={handleLoginSubmit}
-					submitText={isLoading ? "Завантаження..." : "Увійти"}
+					submitText={loginMutation.isPending ? "Завантаження..." : "Увійти"}
 					disabled={loginMutation.isPending}
 					error={serverError && !showRegister ? serverError : ""}
 				/>
 			)}
 			{showRegister && (
 				<AuthForm
-					title={isLoading ? "Завантаження..." : "Реєстрація"}
+					title={registerMutation.isPending ? "Завантаження..." : "Реєстрація"}
 					fields={[
 						{
 							name: "username",
@@ -160,12 +175,13 @@ export default function LoginPage() {
 							placeholder: "Пароль",
 							required: true,
 						},
-						{ name: "name", type: "text", placeholder: "Ім'я", required: true },
 					]}
 					values={registerForm}
 					onChange={handleRegisterChange}
 					onSubmit={handleRegisterSubmit}
-					submitText={isLoading ? "Завантаження..." : "Зареєструватися"}
+					submitText={
+						registerMutation.isPending ? "Завантаження..." : "Зареєструватися"
+					}
 					disabled={registerMutation.isPending}
 					error={serverError && showRegister ? serverError : ""}
 				/>
