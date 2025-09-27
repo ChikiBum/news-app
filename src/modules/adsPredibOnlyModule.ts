@@ -1,77 +1,4 @@
-declare global {
-	interface Window {
-		pbjs: {
-			que: Array<() => void>;
-			setConfig: (config: {
-				enableTIDs?: boolean;
-				debug?: boolean;
-				[key: string]: unknown;
-			}) => void;
-			addAdUnits: (
-				adUnits: Array<{
-					code: string;
-					mediaTypes: {
-						banner?: {
-							sizes: Array<[number, number]>;
-						};
-						video?: Record<string, unknown>;
-						native?: Record<string, unknown>;
-					};
-					bids: Array<{
-						bidder: string;
-						params: Record<string, unknown>;
-					}>;
-				}>,
-			) => void;
-			requestBids: (options: {
-				timeout?: number;
-				bidsBackHandler?: () => void;
-				adUnits?: Array<Record<string, unknown>>;
-			}) => void;
-			getHighestCpmBids: (adUnitCode?: string) => PrebidBid[];
-			renderAd: (doc: Document, adId: string) => void;
-			getBidRequests?: () => Array<Record<string, unknown>>;
-			getBidResponses?: () => Record<string, PrebidBid[]>;
-			getAllWinningBids?: () => PrebidBid[];
-			setTargetingForGPTAsync?: (adUnitCode: string) => void;
-			[key: string]: unknown;
-		};
-	}
-}
-
-interface PrebidBid {
-	adId: string;
-	adUnitCode: string;
-	auctionId: string;
-	bidder: string;
-	bidderCode: string;
-	cpm: number;
-	creativeId: string;
-	currency: string;
-	dealId?: string;
-	height: number;
-	mediaType: "banner" | "video" | "native";
-	netRevenue: boolean;
-	originalCpm: number;
-	originalCurrency: string;
-	requestId: string;
-	responseTimestamp: number;
-	size: string;
-	source: string;
-	timeToRespond: number;
-	ttl: number;
-	width: number;
-	ad?: string;
-	adserverTargeting?: Record<string, string>;
-	meta?: {
-		advertiserDomains?: string[];
-		brandId?: number;
-		brandName?: string;
-		primaryCatId?: string;
-		secondaryCatIds?: string[];
-		mediaType?: string;
-	};
-}
+import type { PrebidBid } from "../types";
 
 window.addEventListener("load", () => {
 	const AD_SIZES: Array<[number, number]> = [
@@ -94,6 +21,8 @@ window.addEventListener("load", () => {
 		},
 	];
 
+	const prebidScriptUrl =
+		"http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter";
 	const adsContainerCode = ".ads-wrapper";
 	const processedElements = new Set<Element>();
 
@@ -103,8 +32,7 @@ window.addEventListener("load", () => {
 	}
 
 	const prebidScript = document.createElement("script");
-	prebidScript.src =
-		"http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter";
+	prebidScript.src = prebidScriptUrl;
 	prebidScript.async = true;
 
 	prebidScript.onload = () => {
@@ -129,8 +57,6 @@ window.addEventListener("load", () => {
 				bids: bidders,
 			};
 		});
-
-		console.log("adUnits ", adUnits);
 
 		if (adUnits.length === 0) {
 			return;
@@ -164,9 +90,8 @@ window.addEventListener("load", () => {
 				if (!adId || processedElements.has(containerElement)) {
 					return;
 				}
-				console.log("before processedElements ", processedElements);
+
 				processedElements.add(containerElement);
-				console.log("after processedElements ", processedElements);
 				const bids = wpbjs.getHighestCpmBids(adId);
 				containerElement.innerHTML = "";
 
@@ -179,7 +104,6 @@ window.addEventListener("load", () => {
 
 				if (bids.length > 0) {
 					const winningBid: PrebidBid = bids[0];
-					console.log("winningBid ", typeof winningBid);
 
 					iframe.style.width = `${winningBid.width}px`;
 					iframe.style.height = `${winningBid.height}px`;

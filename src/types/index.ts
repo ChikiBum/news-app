@@ -93,3 +93,78 @@ export type AuthFormProps = {
 	disabled?: boolean;
 	error?: string;
 };
+
+declare global {
+	interface Window {
+		pbjs: {
+			que: Array<() => void>;
+			setConfig: (config: {
+				enableTIDs?: boolean;
+				debug?: boolean;
+				[key: string]: unknown;
+			}) => void;
+			addAdUnits: (
+				adUnits: Array<{
+					code: string;
+					mediaTypes: {
+						banner?: {
+							sizes: Array<[number, number]>;
+						};
+						video?: Record<string, unknown>;
+						native?: Record<string, unknown>;
+					};
+					bids: Array<{
+						bidder: string;
+						params: Record<string, unknown>;
+					}>;
+				}>,
+			) => void;
+			requestBids: (options: {
+				timeout?: number;
+				bidsBackHandler?: () => void;
+				adUnits?: Array<Record<string, unknown>>;
+			}) => void;
+			getHighestCpmBids: (adUnitCode?: string) => PrebidBid[];
+			renderAd: (doc: Document, adId: string) => void;
+			getBidRequests?: () => Array<Record<string, unknown>>;
+			getBidResponses?: () => Record<string, PrebidBid[]>;
+			getAllWinningBids?: () => PrebidBid[];
+			setTargetingForGPTAsync?: (adUnitCode: string) => void;
+			[key: string]: unknown;
+		};
+	}
+}
+
+export interface PrebidBid {
+	adId: string;
+	adUnitCode: string;
+	auctionId: string;
+	bidder: string;
+	bidderCode: string;
+	cpm: number;
+	creativeId: string;
+	currency: string;
+	dealId?: string;
+	height: number;
+	mediaType: "banner" | "video" | "native";
+	netRevenue: boolean;
+	originalCpm: number;
+	originalCurrency: string;
+	requestId: string;
+	responseTimestamp: number;
+	size: string;
+	source: string;
+	timeToRespond: number;
+	ttl: number;
+	width: number;
+	ad?: string;
+	adserverTargeting?: Record<string, string>;
+	meta?: {
+		advertiserDomains?: string[];
+		brandId?: number;
+		brandName?: string;
+		primaryCatId?: string;
+		secondaryCatIds?: string[];
+		mediaType?: string;
+	};
+}
