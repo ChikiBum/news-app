@@ -3,10 +3,16 @@ const AD_SIZES = [
 	[250, 250],
 ];
 
+const adtelligentAid = 350975;
+
+const adsContainerCode = "#ads-wrapper1";
+
 let adIdCounter = 1;
 function generateUniqueAdId(): string {
 	return `my-uniq-id-${adIdCounter++}`;
 }
+
+localStorage.setItem("adsDebug", "true");
 
 const processedElements = new Set<Element>();
 
@@ -75,7 +81,7 @@ function loadGoogleScript() {
 
 function loadPbjsScript() {
 	debugLog("📊 Загружаем Prebid.js скрипт...");
-	const adsContainers = document.querySelectorAll(".ads-wrapper");
+	const adsContainers = document.querySelectorAll(adsContainerCode);
 	debugLog("📊 Найдено контейнеров для рекламы:", adsContainers.length);
 
 	const adUnitsData = Array.from(adsContainers).map((container) => {
@@ -85,7 +91,7 @@ function loadPbjsScript() {
 		return {
 			code: uniqueId,
 			mediaTypes: { banner: { sizes: AD_SIZES } },
-			bids: [{ bidder: "adtelligent", params: { aid: 350975 } }],
+			bids: [{ bidder: "adtelligent", params: { aid: adtelligentAid } }],
 		};
 	});
 
