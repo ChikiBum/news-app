@@ -4,6 +4,7 @@ window.addEventListener("load", () => {
 	const AD_SIZES: Array<[number, number]> = [
 		[300, 250],
 		[250, 250],
+		[728, 90],
 	];
 	const bidders = [
 		{
@@ -19,10 +20,19 @@ window.addEventListener("load", () => {
 				bidfloor: 0.1,
 			},
 		},
+		{
+			bidder: "obozhko",
+			params: {
+				anonId: localStorage.getItem("anonId") || "test-uid",
+				geo: "UA",
+			},
+		},
 	];
 
+	// const prebidScriptUrl =
+	// 	"http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter";
 	const prebidScriptUrl =
-		"http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter";
+		"http://localhost:4444/bundle?modules=obozhkoBidAdapter";
 	const adsContainerCode = ".ads-wrapper";
 	const processedElements = new Set<Element>();
 
