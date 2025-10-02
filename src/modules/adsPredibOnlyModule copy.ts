@@ -1,4 +1,4 @@
-import type { PrebidBid } from "../types";
+import type { AdStatEventType, PrebidBid } from "../types";
 
 window.addEventListener("load", () => {
 	const AD_SIZES: Array<[number, number]> = [
@@ -53,9 +53,12 @@ window.addEventListener("load", () => {
 	function runPrebid() {
 		const localDebug = localStorage.getItem("prebidDebug");
 
-		const anonId: string =
-			localStorage.getItem("anonId") ?? crypto.randomUUID();
-		localStorage.setItem("anonId", anonId);
+		let anonId = localStorage.getItem("anonId");
+		if (!anonId) {
+			anonId = crypto.randomUUID();
+			localStorage.setItem("anonId", anonId);
+		}
+
 
 		const adsContainers = document.querySelectorAll(adsContainerCode);
 		const adUnits = Array.from(adsContainers).map((container) => {
@@ -80,6 +83,22 @@ window.addEventListener("load", () => {
 		wpbjs.que = wpbjs.que || [];
 
 		wpbjs.que.push(() => {
+			if (sendAdStatEvent) {
+				const statEvents: AdStatEventType[] = [
+					"auctionInit",
+					"auctionEnd",
+					"bidRequested",
+					"bidResponse",
+					"bidWon",
+				];
+
+				statEvents.forEach((eventType) => {
+					window.pbjs.onEvent(eventType, (data: unknown) => {
+						sendAdStatEvent({ anonId, type: eventType, meta: data });
+					});
+				});
+			}
+
 			wpbjs.setConfig({
 				enableTIDs: true,
 				debug: Boolean(localDebug),
@@ -155,7 +174,7 @@ window.addEventListener("load", () => {
 							'<div style="text-align: center; padding: 20px;">No ad content</div>';
 
 						const closeBtn = iframeDoc.createElement("button");
-						closeBtn.innerHTML = "x";
+						closeBtn.innerHTML = "&times;";
 						closeBtn.className = "ad-close-btn";
 						closeBtn.onclick = (e) => {
 							e.preventDefault();
