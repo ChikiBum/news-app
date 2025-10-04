@@ -1,17 +1,36 @@
 import type { AdStatEvent, AdStatEventType } from "../types";
 
-const b = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000";
+const backendUrl = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000";
 
-const BACKEND_URL = `${b}/ads/event/`;
+const BACKEND_URL = `${backendUrl}/ads/event/`;
+
 const anonId: string = localStorage.getItem("anonId") ?? crypto.randomUUID();
 localStorage.setItem("anonId", anonId);
 
-export function sendAdStatEvent({ anonId, type, adId, meta }: AdStatEvent) {
-	fetch(`${BACKEND_URL}${type}`, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ anonId, adId, meta }),
-	}).catch(() => {});
+export function sendAdStatEvent({
+	anonId,
+	type,
+	adId,
+	meta,
+	critical = false,
+}: AdStatEvent) {
+	const url = `${BACKEND_URL}${type}`;
+	const body = JSON.stringify({ anonId, adId, meta });
+
+	if (critical && navigator.sendBeacon) {
+		try {
+			const blob = new Blob([body], { type: "application/json" });
+			navigator.sendBeacon(url, blob);
+			return;
+		} catch (e) {
+			fetch(url, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body,
+				keepalive: critical,
+			}).catch(() => {});
+		}
+	}
 }
 
 function registerPrebidEvents() {
@@ -38,6 +57,15 @@ function registerPrebidEvents() {
 		});
 	}
 }
+
+window.addEventListener("beforeunload", () => {
+	sendAdStatEvent({
+		anonId,
+		type: "pageUnload",
+		meta: { url: window.location.href },
+		critical: true,
+	});
+});
 
 if (window.pbjs && typeof window.pbjs.onEvent === "function") {
 	registerPrebidEvents();

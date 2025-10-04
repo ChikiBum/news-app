@@ -175,6 +175,7 @@ export type AdStatEvent = {
 	type: AdStatEventType;
 	adId?: string;
 	meta?: unknown;
+	critical?: boolean;
 };
 
 export type AdStatEventType =
@@ -184,4 +185,5 @@ export type AdStatEventType =
 	| "auctionEnd"
 	| "bidRequested"
 	| "bidResponse"
-	| "bidWon";
+	| "bidWon"
+	| "pageUnload"
