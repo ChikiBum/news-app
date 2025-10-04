@@ -2,8 +2,10 @@ import type React from "react";
 import { useEffect } from "react";
 
 const SSRCreativeForm: React.FC = () => {
+	const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000";
+
 	useEffect(() => {
-		window.location.href = "http://localhost:3000/ssr";
+		window.location.href = `${BACKEND_URL}/ssr`;
 	}, []);
 
 	return (
@@ -11,7 +13,7 @@ const SSRCreativeForm: React.FC = () => {
 			<h2>Перенаправление на SSR форму...</h2>
 			<p>Если автоматическое перенаправление не работает:</p>
 			<a
-				href="http://localhost:3000/ssr"
+				href={`${BACKEND_URL}/ssr`}
 				target="_blank"
 				rel="noopener noreferrer"
 			>

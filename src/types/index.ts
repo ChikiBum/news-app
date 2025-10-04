@@ -170,6 +170,13 @@ export interface PrebidBid {
 	};
 }
 
+export type AdStatEvent = {
+	anonId: string;
+	type: AdStatEventType;
+	adId?: string;
+	meta?: unknown;
+};
+
 export type AdStatEventType =
 	| "load_page"
 	| "load_ad_module"

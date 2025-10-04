@@ -1,6 +1,13 @@
 import type { PrebidBid } from "../types";
 
 window.addEventListener("load", () => {
+	const BACKEND_URL =
+		import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000";
+	const PREBID_URL = import.meta.env.VITE_PREBID_URL ?? "http://localhost:4444";
+
+	const anonId: string = localStorage.getItem("anonId") ?? crypto.randomUUID();
+	localStorage.setItem("anonId", anonId);
+
 	const AD_SIZES: Array<[number, number]> = [
 		[300, 250],
 		[250, 250],
@@ -23,16 +30,28 @@ window.addEventListener("load", () => {
 		{
 			bidder: "obozhko",
 			params: {
-				anonId: localStorage.getItem("anonId") || "test-uid",
+				anonId: anonId,
 				geo: "UA",
 			},
 		},
 	];
 
+	const modules = [
+		"adtelligentBidAdapter",
+		"bidmaticBidAdapter",
+		"obozhkoBidAdapter",
+	];
+
+	const prebidScriptUrl = `${PREBID_URL}/bundle?modules=${modules.join(
+		"&modules=",
+	)}`;
+
+	console.log("prebidScriptUrl ", prebidScriptUrl);
+
 	// const prebidScriptUrl =
-	// "http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter&modules=obozhkoBidAdapter";
-	const prebidScriptUrl =
-		"http://localhost:4444/bundle?modules=obozhkoBidAdapter";
+	// 	"http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter&modules=obozhkoBidAdapter";
+	// const prebidScriptUrl =
+	// 	"http://localhost:4444/bundle?modules=obozhkoBidAdapter";
 	const adsContainerCode = ".ads-wrapper";
 	const processedElements = new Set<Element>();
 
@@ -52,10 +71,6 @@ window.addEventListener("load", () => {
 
 	function runPrebid() {
 		const localDebug = localStorage.getItem("prebidDebug");
-
-		const anonId: string =
-			localStorage.getItem("anonId") ?? crypto.randomUUID();
-		localStorage.setItem("anonId", anonId);
 
 		const adsContainers = document.querySelectorAll(adsContainerCode);
 		const adUnits = Array.from(adsContainers).map((container) => {
@@ -161,7 +176,7 @@ window.addEventListener("load", () => {
 							e.preventDefault();
 							e.stopPropagation();
 							try {
-								fetch("http://localhost:3000/ads/event/close", {
+								fetch(`${BACKEND_URL}/ads/event/close`, {
 									method: "POST",
 									headers: { "Content-Type": "application/json" },
 									body: JSON.stringify({
@@ -179,7 +194,7 @@ window.addEventListener("load", () => {
 							if ((e.target as HTMLElement)?.classList.contains("ad-close-btn"))
 								return;
 							try {
-								fetch("http://localhost:3000/ads/event/click", {
+								fetch(`${BACKEND_URL}/ads/event/click`, {
 									method: "POST",
 									headers: { "Content-Type": "application/json" },
 									body: JSON.stringify({

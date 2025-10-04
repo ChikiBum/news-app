@@ -1,12 +1,23 @@
-import type { AdStatEvent, AdStatEventType } from "../types";
+import type { AdStatEventType } from "../types";
 
 const b = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000";
 
 const BACKEND_URL = `${b}/ads/event/`;
+
 const anonId: string = localStorage.getItem("anonId") ?? crypto.randomUUID();
 localStorage.setItem("anonId", anonId);
 
-export function sendAdStatEvent({ anonId, type, adId, meta }: AdStatEvent) {
+export function sendAdStatEvent({
+	anonId,
+	type,
+	adId,
+	meta,
+}: {
+	anonId: string;
+	type: string;
+	adId?: string;
+	meta?: unknown;
+}) {
 	fetch(`${BACKEND_URL}${type}`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
