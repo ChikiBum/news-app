@@ -41,13 +41,21 @@ export default function Header() {
 						</Link>
 					)}
 					{isAuthenticated && (
-						<button
-							type="button"
-							onClick={handleLogout}
-							className="text-blue-600 hover:text-blue-800 font-medium transition-colors bg-transparent border-none cursor-pointer"
-						>
-							Logout
-						</button>
+						<>
+							<button
+								type="button"
+								onClick={handleLogout}
+								className="text-blue-600 hover:text-blue-800 font-medium transition-colors bg-transparent border-none cursor-pointer"
+							>
+								Logout
+							</button>
+							<Link
+								to="/ssr-form"
+								className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+							>
+								Создать креатив
+							</Link>
+						</>
 					)}
 				</nav>
 			</div>

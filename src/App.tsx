@@ -6,6 +6,8 @@ import ErrorPage from "./pages/ErrorPage";
 import LoginPage from "./pages/LoginPage";
 import NewsDetailPage from "./pages/NewsDetailPage";
 import NewsFeedPage from "./pages/NewsFeedPage";
+import SSRCreativeForm from "./pages/SSRCreativeForm";
+
 import "virtual:plugins";
 
 function App() {
@@ -28,6 +30,14 @@ function App() {
 						element={
 							<ProtectedRoute>
 								<NewsDetailPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/ssr-form"
+						element={
+							<ProtectedRoute>
+								<SSRCreativeForm />
 							</ProtectedRoute>
 						}
 					/>

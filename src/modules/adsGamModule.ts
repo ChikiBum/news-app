@@ -5,6 +5,8 @@ const AD_SIZES = [
 
 const adtelligentAid = 350975;
 
+const PREBID_URL = import.meta.env.VITE_PREBID_URL ?? "http://localhost:4444";
+
 const adsContainerCode = "#ads-wrapper1";
 
 let adIdCounter = 1;
@@ -71,7 +73,7 @@ function appendScriptWithCode(code: string) {
 function loadAdtelligentBidAdapter() {
 	debugLog("🎯 Загружаем AdtelligentBidAdapter...");
 	return appendScriptWithSrc(
-		"http://localhost:4444/bundle?modules=adtelligentBidAdapter",
+		`${PREBID_URL}/bundle?modules=adtelligentBidAdapter`,
 	);
 }
 function loadGoogleScript() {

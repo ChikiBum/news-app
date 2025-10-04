@@ -98,6 +98,7 @@ declare global {
 	interface Window {
 		pbjs: {
 			que: Array<() => void>;
+			onEvent: (eventType: string, callback: (data: unknown) => void) => void;
 			setConfig: (config: {
 				enableTIDs?: boolean;
 				debug?: boolean;
@@ -168,3 +169,21 @@ export interface PrebidBid {
 		mediaType?: string;
 	};
 }
+
+export type AdStatEvent = {
+	anonId: string;
+	type: AdStatEventType;
+	adId?: string;
+	meta?: unknown;
+	critical?: boolean;
+};
+
+export type AdStatEventType =
+	| "load_page"
+	| "load_ad_module"
+	| "auctionInit"
+	| "auctionEnd"
+	| "bidRequested"
+	| "bidResponse"
+	| "bidWon"
+	| "pageUnload"
