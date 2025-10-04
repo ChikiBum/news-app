@@ -22,15 +22,16 @@ export function sendAdStatEvent({
 			const blob = new Blob([body], { type: "application/json" });
 			navigator.sendBeacon(url, blob);
 			return;
-		} catch (e) {
-			fetch(url, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body,
-				keepalive: critical,
-			}).catch(() => {});
+		} catch (error) {
+			console.error("Error sending beacon:", error);
 		}
 	}
+	fetch(url, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body,
+		keepalive: critical,
+	}).catch(() => {});
 }
 
 function registerPrebidEvents() {
