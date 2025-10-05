@@ -1,17 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import type { GridSettings } from "../types";
+import { makeAuthenticatedRequest } from "../utils/auth";
 
 export function useGridData(settings: GridSettings) {
+	const BACKEND_URL =
+		import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000";
+	const { page, pageSize, filters, sort } = settings;
+	const backendSort = Array.isArray(sort) ? sort[0] : sort;
+	const payload = { page, pageSize, filters, sort: backendSort };
+
 	return useQuery({
 		queryKey: ["gridData", settings],
-		queryFn: async () => {
-			const res = await fetch("/api/event/grid", {
+		queryFn: () =>
+			makeAuthenticatedRequest(`${BACKEND_URL}/statistics/grid`, {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(settings),
-			});
-			if (!res.ok) throw new Error("Failed to fetch grid data");
-			return res.json();
-		},
+				body: JSON.stringify(payload),
+			}),
 	});
 }

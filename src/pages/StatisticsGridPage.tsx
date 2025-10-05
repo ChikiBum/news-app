@@ -27,6 +27,17 @@ const DEFAULT_COLUMNS = [
 	"Click",
 ];
 
+function normalizeSort(
+	sort: { field: string; direction: any }[] | undefined,
+): { field: string; direction: "asc" | "desc" }[] {
+	if (!Array.isArray(sort) || sort.length === 0)
+		return [{ field: "Date", direction: "desc" }];
+	return sort.map((s) => ({
+		field: s.field,
+		direction: s.direction === "asc" ? "asc" : "desc",
+	}));
+}
+
 export default function StatisticsGridPage() {
 	const {
 		settings,
@@ -37,21 +48,29 @@ export default function StatisticsGridPage() {
 		setPageSize,
 		setViewName,
 	} = useGridSettings();
-	const [columns, setLocalColumns] = useState(DEFAULT_COLUMNS);
+
+	const [columns, setLocalColumns] = useState<string[]>(
+		settings.columns && settings.columns.length > 0
+			? settings.columns
+			: DEFAULT_COLUMNS,
+	);
 
 	const { data: savedViews } = useSavedViews();
 
-	const { data, isLoading, error } = useGridData({
+	const normalizedSettings = {
 		...settings,
-		columns,
-	});
+		sort: normalizeSort(settings.sort),
+		columns: columns,
+	};
+
+	const { data, isLoading, error } = useGridData(normalizedSettings);
 
 	const handleSelectView = (viewName: string) => {
 		const view = savedViews?.find((v: SavedView) => v.viewName === viewName);
 		if (view) {
 			setColumns(view.columns);
 			setFilters(view.filters);
-			setSort(view.sort);
+			setSort(normalizeSort(view.sort));
 			setPage(view.page);
 			setPageSize(view.pageSize);
 			setViewName(view.viewName);
