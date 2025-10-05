@@ -186,4 +186,15 @@ export type AdStatEventType =
 	| "bidRequested"
 	| "bidResponse"
 	| "bidWon"
-	| "pageUnload"
+	| "pageUnload";
+
+export type GridUserSettings = {
+	userId: string;
+	filters: Record<string, any>;
+	visibleColumns: string[];
+	sort: { field: string; direction: "asc" | "desc" }[];
+	pageSize: number;
+	viewName?: string;
+	createdAt?: string;
+	updatedAt?: string;
+};
