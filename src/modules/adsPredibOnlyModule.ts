@@ -1,6 +1,13 @@
 import type { PrebidBid } from "../types";
 
 window.addEventListener("load", () => {
+	const BACKEND_URL =
+		import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000";
+	const PREBID_URL = import.meta.env.VITE_PREBID_URL ?? "http://localhost:4444";
+
+	const anonId: string = localStorage.getItem("anonId") ?? crypto.randomUUID();
+	localStorage.setItem("anonId", anonId);
+
 	const AD_SIZES: Array<[number, number]> = [
 		[300, 250],
 		[250, 250],
@@ -19,10 +26,31 @@ window.addEventListener("load", () => {
 				bidfloor: 0.1,
 			},
 		},
+		{
+			bidder: "obozhko",
+			params: {
+				anonId: anonId,
+				geo: "UA",
+			},
+		},
 	];
 
-	const prebidScriptUrl =
-		"http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter";
+	const modules = [
+		"adtelligentBidAdapter",
+		"bidmaticBidAdapter",
+		"obozhkoBidAdapter",
+	];
+
+	const prebidScriptUrl = `${PREBID_URL}/bundle?modules=${modules.join(
+		"&modules=",
+	)}`;
+
+	console.log("prebidScriptUrl ", prebidScriptUrl);
+
+	// const prebidScriptUrl =
+	// 	"http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter&modules=obozhkoBidAdapter";
+	// const prebidScriptUrl =
+	// 	"http://localhost:4444/bundle?modules=obozhkoBidAdapter";
 	const adsContainerCode = ".ads-wrapper";
 	const processedElements = new Set<Element>();
 
@@ -99,7 +127,7 @@ window.addEventListener("load", () => {
 					mode: "open",
 				});
 				const iframe = document.createElement("iframe");
-				iframe.frameBorder = "14px";
+				iframe.frameBorder = "0";
 				iframe.scrolling = "no";
 
 				if (bids.length > 0) {
@@ -118,11 +146,63 @@ window.addEventListener("load", () => {
 						if (!iframeDoc) return;
 						const style = iframeDoc.createElement("style");
 						style.innerHTML = `
-							* { margin: 0; padding: 0; box-sizing: border-box; }
-							body { margin: 0; padding: 0; overflow: hidden; }
-							html { margin: 0; padding: 0; }
-						`;
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body { margin: 0; padding: 0; overflow: hidden; }
+              html { margin: 0; padding: 0; }
+              .ad-close-btn {
+                position: absolute;
+                top: 0; right: 0;
+                width: 24px; height: 24px;
+                background: #fff;
+                border: none;
+                color: #000;
+                font-size: 18px;
+                cursor: pointer;
+                z-index: 10;
+                opacity: 0.7;
+              }
+            `;
 						iframeDoc.head.appendChild(style);
+
+						iframeDoc.body.innerHTML =
+							winningBid.ad ||
+							'<div style="text-align: center; padding: 20px;">No ad content</div>';
+
+						const closeBtn = iframeDoc.createElement("button");
+						closeBtn.innerHTML = "x";
+						closeBtn.className = "ad-close-btn";
+						closeBtn.onclick = (e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							try {
+								fetch(`${BACKEND_URL}/ads/event/close`, {
+									method: "POST",
+									headers: { "Content-Type": "application/json" },
+									body: JSON.stringify({
+										anonId: anonId,
+										adId: winningBid.creativeId,
+									}),
+								});
+							} catch (err) {}
+
+							iframe.style.display = "none";
+						};
+						iframeDoc.body.appendChild(closeBtn);
+
+						iframeDoc.body.addEventListener("click", (e) => {
+							if ((e.target as HTMLElement)?.classList.contains("ad-close-btn"))
+								return;
+							try {
+								fetch(`${BACKEND_URL}/ads/event/click`, {
+									method: "POST",
+									headers: { "Content-Type": "application/json" },
+									body: JSON.stringify({
+										anonId: anonId,
+										adId: winningBid.creativeId,
+									}),
+								});
+							} catch (err) {}
+						});
 
 						wpbjs.renderAd(iframeDoc, bids[0].adId);
 					};
@@ -133,19 +213,19 @@ window.addEventListener("load", () => {
 						if (!iframeDoc) return;
 						iframeDoc.open();
 						iframeDoc.write(`
-					<html>
-							<head>
-									<style>
-											* { margin: 0; padding: 0; box-sizing: border-box; }
-											body { margin: 0; padding: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-											html { margin: 0; padding: 0; }
-									</style>
-							</head>
-							<body>
-									<h1 style="font-size: 16px;">No bids received</h1>
-							</body>
-					</html>
-			`);
+              <html>
+                <head>
+                  <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body { margin: 0; padding: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+                    html { margin: 0; padding: 0; }
+                  </style>
+                </head>
+                <body>
+                  <h1 style="font-size: 16px;">No bids received</h1>
+                </body>
+              </html>
+            `);
 						iframeDoc.close();
 					};
 					shadowRoot.appendChild(iframe);
