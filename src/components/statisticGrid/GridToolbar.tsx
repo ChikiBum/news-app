@@ -23,8 +23,23 @@ export const GridToolbar = ({
 		setViewName(viewNameInput);
 	};
 
+	const defaultView = {
+		id: "default",
+		viewName: "Default",
+		filters: {},
+		sort: [{ field: "createdAt", direction: "desc" }],
+		page: 1,
+		pageSize: 10,
+		columns: ["id", "type", "createdAt"],
+	};
+
+	const allViews = [
+		defaultView,
+		...(Array.isArray(savedViews) ? savedViews : []),
+	];
+
 	return (
-		<div className="flex flex-wrap gap-2 items-center p-2 bg-white rounded shadow mb-2">
+		<div className="flex flex-wrap gap-2 items-center p-2 bg-white rounded shadow mb-2 text-blue-700">
 			<div className="flex gap-2">
 				<input
 					className="border px-2 py-1 rounded"
@@ -47,14 +62,11 @@ export const GridToolbar = ({
 					value={settings.viewName}
 					onChange={(e) => onSelectView(e.target.value)}
 				>
-					<option value="">Select View</option>
-					{Array.isArray(savedViews) && savedViews.length > 0
-						? savedViews.map((v) => (
-								<option key={v.id} value={v.viewName}>
-									{v.viewName}
-								</option>
-							))
-						: null}
+					{allViews.map((v) => (
+						<option key={v.id} value={v.viewName}>
+							{v.viewName}
+						</option>
+					))}
 				</select>
 			</div>
 			<ExportButtons items={data} columns={columns} />

@@ -13,8 +13,7 @@ export function useSavedViews() {
 		queryKey: ["savedViews"],
 		queryFn: async () => {
 			const result = await makeAuthenticatedRequest(localApiUrl("get"));
-			// Переконуємося що повертаємо масив
-			return Array.isArray(result) ? result : [];
+			return Array.isArray(result.settings) ? result.settings : [];
 		},
 	});
 }

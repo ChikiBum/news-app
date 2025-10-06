@@ -7,6 +7,8 @@ export const SavedViews = ({ onSelectView }: GridSavedViewsProps) => {
 	const deleteMutation = useDeleteViewMutation();
 	const { setViewName } = useGridSettings();
 
+	// console.log('SavedViews.tsx savedViews ', savedViews);
+
 	if (isLoading) return <div>Loading views...</div>;
 
 	const handleDelete = (id: string) => {
@@ -19,25 +21,25 @@ export const SavedViews = ({ onSelectView }: GridSavedViewsProps) => {
 			<ul>
 				{Array.isArray(savedViews) && savedViews.length > 0 ? (
 					savedViews.map((v: SavedView) => (
-					<li key={v.id} className="flex items-center gap-2">
-						<button
-							type="button"
-							className="text-blue-600 hover:underline"
-							onClick={() => {
-								setViewName(v.viewName);
-								onSelectView(v.viewName);
-							}}
-						>
-							{v.viewName}
-						</button>
-						<button
-							type="button"
-							className="text-red-600"
-							onClick={() => handleDelete(v.id)}
-						>
-							Delete
-						</button>
-					</li>
+						<li key={v.id} className="flex items-center gap-2">
+							<button
+								type="button"
+								className="text-blue-600 hover:underline"
+								onClick={() => {
+									setViewName(v.viewName);
+									onSelectView(v.viewName);
+								}}
+							>
+								{v.viewName}
+							</button>
+							<button
+								type="button"
+								className="text-red-600"
+								onClick={() => handleDelete(v.id)}
+							>
+								Delete
+							</button>
+						</li>
 					))
 				) : (
 					<li className="text-gray-500">No saved views</li>

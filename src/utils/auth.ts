@@ -6,22 +6,30 @@ const getAuthToken = (): string => {
 	return token;
 };
 
-const getAuthHeaders = () => ({
-	Authorization: `Bearer ${getAuthToken()}`,
-	"Content-Type": "application/json",
-});
+const getAuthHeaders = (hasBody = false) => {
+	const headers: Record<string, string> = {
+		Authorization: `Bearer ${getAuthToken()}`,
+	};
+	if (hasBody) {
+		headers["Content-Type"] = "application/json";
+	}
+	return headers;
+};
 
 export const makeAuthenticatedRequest = async (
 	url: string,
 	options: RequestInit = {},
 ) => {
+	const hasBody = Boolean(options.body);
+
 	const res = await fetch(url, {
 		...options,
 		headers: {
-			...getAuthHeaders(),
+			...getAuthHeaders(hasBody),
 			...options.headers,
 		},
 	});
+
 	if (!res.ok) throw new Error(`Request failed: ${res.statusText}`);
 	return res.json();
 };

@@ -16,14 +16,10 @@ export const GridFilters = ({ columns }: GridFiltersProps) => {
 
 	const formatDateValue = (value: string) => {
 		if (!value) return "";
-		// Конвертуємо 2025-10-06T08:19:14.133Z → 2025-10-06
 		return value.split("T")[0];
 	};
 
 	const handleChange = (col: string, value: string) => {
-		console.log("Filter change:", col, value);
-
-		// Спеціальна обробка для дат
 		if (col === "createdAt" && value) {
 			value = formatDateValue(value);
 		}
@@ -50,7 +46,11 @@ export const GridFilters = ({ columns }: GridFiltersProps) => {
 			<input
 				id={`filter-${col}`}
 				type={inputType}
-				className="border px-2 py-1 pr-8 rounded"
+				className={`border px-2 py-1 pr-8 rounded ${
+					isDateField
+						? "[&::-webkit-calendar-picker-indicator]:bg-white  [&::-webkit-calendar-picker-indicator]:border-gray-300 [&::-webkit-calendar-picker-indicator]:rounded [&::-webkit-calendar-picker-indicator]:p-1"
+						: ""
+				}`}
 				placeholder={isDateField ? "Select date" : `Filter by ${col}`}
 				value={isDateField ? formatDateValue(value) : value}
 				onChange={(e) => handleChange(col, e.target.value)}
