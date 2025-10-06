@@ -198,3 +198,74 @@ export type GridUserSettings = {
 	createdAt?: string;
 	updatedAt?: string;
 };
+
+export type pageSizeOptions = 10 | 25 | 50 | 100;
+
+export type GridSettings = {
+	filters: Record<string, any>;
+	sort: { field: string; direction: "asc" | "desc" }[];
+	page: number;
+	pageSize: number;
+	columns: string[];
+	viewName?: string;
+};
+
+export type GridSettingsState = {
+	settings: GridSettings;
+	setFilters: (filters: GridSettings["filters"]) => void;
+	setSort: (sort: GridSettings["sort"]) => void;
+	setPage: (page: number) => void;
+	setPageSize: (pageSize: number) => void;
+	setColumns: (columns: string[]) => void;
+	setViewName: (viewName: string) => void;
+	reset: () => void;
+};
+
+export interface GridFiltersProps {
+	columns: string[];
+}
+
+export interface GridPaginationProps {
+	total: number;
+}
+
+export type Row = Record<string, unknown>;
+
+export interface GridTableProps {
+	columns: string[];
+	data: Row[];
+	isLoading?: boolean;
+	error?: unknown;
+}
+
+export interface GridToolbarProps {
+	data: Row[];
+	columns: string[];
+	onSelectView: (viewName: string) => void;
+	savedViews: Array<{ id: string; viewName: string }>;
+}
+
+export type ViewType = {
+	viewName: string;
+	columns: string[];
+	filters: Record<string, unknown>;
+	sort: { field: string; direction: "asc" | "desc" }[];
+	page: number;
+	pageSize: number;
+};
+
+export interface GridSavedViewsProps {
+	onSelectView: (viewName: string) => void;
+}
+
+export interface SavedView {
+	id: string;
+	viewName: string;
+	columns: string[];
+	filters: Record<string, any>;
+	sort: { field: string; direction: "asc" | "desc" }[];
+	page: number;
+	pageSize: number;
+}
+
+

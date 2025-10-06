@@ -9,6 +9,7 @@ import NewsFeedPage from "./pages/NewsFeedPage";
 import SSRCreativeForm from "./pages/SSRCreativeForm";
 
 import "virtual:plugins";
+import StatisticsGridPage from "./pages/StatisticsGridPage";
 
 function App() {
 	return (
@@ -38,6 +39,14 @@ function App() {
 						element={
 							<ProtectedRoute>
 								<SSRCreativeForm />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/statistics"
+						element={
+							<ProtectedRoute>
+								<StatisticsGridPage />
 							</ProtectedRoute>
 						}
 					/>

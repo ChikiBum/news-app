@@ -22,8 +22,6 @@ export default function NewsDetailPage() {
 	if (isError) return <div>Помилка: {error.message}</div>;
 	if (!news) return <div>Новину не знайдено</div>;
 
-	console.log("news ", news);
-
 	return (
 		<div className="flex-1 overflow-y-auto max-h-[calc(100vh-220px)]">
 			<div className="max-w-xl mx-auto p-4 bg-white dark:bg-gray-900 rounded shadow mt-8">
