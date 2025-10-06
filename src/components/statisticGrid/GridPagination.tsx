@@ -1,12 +1,14 @@
-import { useGridSettings } from "../store/gridSettings.store";
-import type { GridPaginationProps } from "../types";
+import { useGridSettings } from "../../store/gridSettings.store";
+import type { GridPaginationProps, pageSizeOptions } from "../../types";
 
 export const GridPagination = ({ total }: GridPaginationProps) => {
 	const { settings, setPage, setPageSize } = useGridSettings();
 	const totalPages = Math.ceil(total / settings.pageSize);
 
+	const pageSize: pageSizeOptions[] = [10, 25, 50, 100];
+
 	return (
-		<div className="flex items-center gap-2 mt-2">
+		<div className="flex items-center gap-2 mt-2 text-blue-700">
 			<button
 				type="button"
 				className="btn"
@@ -31,7 +33,7 @@ export const GridPagination = ({ total }: GridPaginationProps) => {
 				value={settings.pageSize}
 				onChange={(e) => setPageSize(Number(e.target.value))}
 			>
-				{[25, 50, 100, 200].map((size) => (
+				{pageSize.map((size) => (
 					<option key={size} value={size}>
 						{size}
 					</option>

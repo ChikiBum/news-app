@@ -34,11 +34,11 @@ export function ExportButtons({ items, columns }: ExportButtonsProps) {
 	};
 
 	return (
-		<div className="flex gap-2">
-			<button type="button" onClick={exportCSV} className="btn">
+		<div className="text-blue-700 flex gap-2 ">
+			<button type="button" onClick={exportCSV} className="btn cursor-pointer">
 				Export CSV
 			</button>
-			<button type="button" onClick={exportXLSX} className="btn">
+			<button type="button" onClick={exportXLSX} className="btn cursor-pointer">
 				Export Excel
 			</button>
 		</div>

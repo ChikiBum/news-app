@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ViewType } from "../types";
+import type { SavedView, ViewType } from "../types";
 import { makeAuthenticatedRequest } from "../utils/auth";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000";
@@ -9,9 +9,13 @@ const localApiUrl = (type: "get" | "post" | "delete" | "update" | "save") =>
 	`${BACKEND_URL}/settings/${type}-user-grid-settings`;
 
 export function useSavedViews() {
-	return useQuery({
+	return useQuery<SavedView[]>({
 		queryKey: ["savedViews"],
-		queryFn: () => makeAuthenticatedRequest(localApiUrl("get")),
+		queryFn: async () => {
+			const result = await makeAuthenticatedRequest(localApiUrl("get"));
+			// Переконуємося що повертаємо масив
+			return Array.isArray(result) ? result : [];
+		},
 	});
 }
 

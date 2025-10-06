@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useGridSettings } from "../store/gridSettings.store";
-import type { GridTableProps, Row } from "../types";
+import { useGridSettings } from "../../store/gridSettings.store";
+import type { GridTableProps, Row } from "../../types";
 
 export const GridTable = ({
 	columns,
@@ -45,7 +45,7 @@ export const GridTable = ({
 
 	return (
 		<div className="overflow-x-auto border rounded-lg bg-white">
-			<table className="min-w-full divide-y divide-gray-200">
+			<table className="min-w-full divide-y divide-gray-200 text-blue-700">
 				<thead>
 					<tr>
 						{columns.map((col: string) => {

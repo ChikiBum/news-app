@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useSaveViewMutation } from "../api/settingsApi";
-import { useGridSettings } from "../store/gridSettings.store";
-import type { GridToolbarProps } from "../types";
+import { useSaveViewMutation } from "../../api/settingsApi";
+import { useGridSettings } from "../../store/gridSettings.store";
+import type { GridToolbarProps } from "../../types";
 import { ExportButtons } from "./ExportButtons";
 
 export const GridToolbar = ({
@@ -48,11 +48,13 @@ export const GridToolbar = ({
 					onChange={(e) => onSelectView(e.target.value)}
 				>
 					<option value="">Select View</option>
-					{savedViews?.map((v) => (
-						<option key={v.id} value={v.viewName}>
-							{v.viewName}
-						</option>
-					))}
+					{Array.isArray(savedViews) && savedViews.length > 0
+						? savedViews.map((v) => (
+								<option key={v.id} value={v.viewName}>
+									{v.viewName}
+								</option>
+							))
+						: null}
 				</select>
 			</div>
 			<ExportButtons items={data} columns={columns} />

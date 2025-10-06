@@ -199,6 +199,8 @@ export type GridUserSettings = {
 	updatedAt?: string;
 };
 
+export type pageSizeOptions = 10 | 25 | 50 | 100;
+
 export type GridSettings = {
 	filters: Record<string, any>;
 	sort: { field: string; direction: "asc" | "desc" }[];
@@ -265,3 +267,5 @@ export interface SavedView {
 	page: number;
 	pageSize: number;
 }
+
+

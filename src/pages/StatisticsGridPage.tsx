@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useGridData } from "../api/gridApi";
 import { useSavedViews } from "../api/settingsApi";
-import { GridFilters } from "../components/GridFilters";
-import { GridPagination } from "../components/GridPagination";
-import { GridTable } from "../components/GridTable";
-import { GridToolbar } from "../components/GridToolbar";
-import { SavedViews } from "../components/SavedViews";
+import { GridFilters } from "../components/statisticGrid/GridFilters";
+import { GridPagination } from "../components/statisticGrid/GridPagination";
+import { GridTable } from "../components/statisticGrid/GridTable";
+import { GridToolbar } from "../components/statisticGrid/GridToolbar";
+import { SavedViews } from "../components/statisticGrid/SavedViews";
 import { useGridSettings } from "../store/gridSettings.store";
 import type { SavedView } from "../types";
 
@@ -28,7 +28,7 @@ const DEFAULT_COLUMNS = [
 ];
 
 function normalizeSort(
-	sort: { field: string; direction: any }[] | undefined,
+	sort: { field: string; direction: "asc" | "desc" | string }[] | undefined,
 ): { field: string; direction: "asc" | "desc" }[] {
 	if (!Array.isArray(sort) || sort.length === 0)
 		return [{ field: "Date", direction: "desc" }];
@@ -66,7 +66,9 @@ export default function StatisticsGridPage() {
 	const { data, isLoading, error } = useGridData(normalizedSettings);
 
 	const handleSelectView = (viewName: string) => {
-		const view = savedViews?.find((v: SavedView) => v.viewName === viewName);
+		const view = Array.isArray(savedViews)
+			? savedViews.find((v: SavedView) => v.viewName === viewName)
+			: undefined;
 		if (view) {
 			setColumns(view.columns);
 			setFilters(view.filters);
@@ -83,13 +85,13 @@ export default function StatisticsGridPage() {
 	}, [columns, setColumns]);
 
 	return (
-		<div className="max-w-screen-2xl mx-auto p-4">
+		<div className="flex-1 overflow-y-auto max-h-[calc(100vh-220px)]">
 			<h1 className="text-3xl font-bold mb-4">Statistics Grid</h1>
 			<GridToolbar
 				data={data?.items ?? []}
 				columns={columns}
 				onSelectView={handleSelectView}
-				savedViews={savedViews}
+				savedViews={savedViews ?? []}
 			/>
 			<SavedViews onSelectView={handleSelectView} />
 			<GridFilters columns={columns} />

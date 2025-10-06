@@ -45,7 +45,6 @@ window.addEventListener("load", () => {
 		"&modules=",
 	)}`;
 
-	console.log("prebidScriptUrl ", prebidScriptUrl);
 
 	// const prebidScriptUrl =
 	// 	"http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter&modules=obozhkoBidAdapter";

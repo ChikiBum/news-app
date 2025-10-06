@@ -5,7 +5,7 @@ const DEFAULT_GRID_SETTINGS: GridSettings = {
 	filters: {},
 	sort: [{ field: "createdAt", direction: "desc" }],
 	page: 1,
-	pageSize: 100,
+	pageSize: 10,
 	columns: ["id", "type", "adId", "anonId", "createdAt"],
 	viewName: "Default",
 } as const;
