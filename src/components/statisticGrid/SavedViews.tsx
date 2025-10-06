@@ -7,8 +7,6 @@ export const SavedViews = ({ onSelectView }: GridSavedViewsProps) => {
 	const deleteMutation = useDeleteViewMutation();
 	const { setViewName } = useGridSettings();
 
-	// console.log('SavedViews.tsx savedViews ', savedViews);
-
 	if (isLoading) return <div>Loading views...</div>;
 
 	const handleDelete = (id: string) => {
