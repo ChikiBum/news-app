@@ -156,7 +156,6 @@ export const FeedParser = () => {
 						</button>
 					</form>
 
-					{/* ✅ Error message */}
 					{parseFeedMutation.isError && (
 						<div
 							className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded"
@@ -170,7 +169,6 @@ export const FeedParser = () => {
 						</div>
 					)}
 
-					{/* ✅ Success message */}
 					{parseFeedMutation.isSuccess && (
 						<div
 							className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded"

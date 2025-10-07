@@ -29,7 +29,6 @@ const SSRCreativeForm: React.FC = () => {
 					title="SSR Creative Form"
 				/>
 			</div>
-			{/* Footer залишається */}
 		</div>
 	);
 };
