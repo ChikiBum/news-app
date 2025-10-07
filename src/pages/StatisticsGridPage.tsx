@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useGridData } from "../api/gridApi";
 import { useSavedViews } from "../api/settingsApi";
 import { GridFilters } from "../components/statisticGrid/GridFilters";
@@ -47,13 +46,13 @@ export default function StatisticsGridPage() {
 		setPage,
 		setPageSize,
 		setViewName,
+		reset,
 	} = useGridSettings();
 
-	const [columns, setLocalColumns] = useState<string[]>(
+	const columns =
 		settings.columns && settings.columns.length > 0
 			? settings.columns
-			: DEFAULT_COLUMNS,
-	);
+			: DEFAULT_COLUMNS;
 
 	const { data: savedViews } = useSavedViews();
 
@@ -66,35 +65,42 @@ export default function StatisticsGridPage() {
 	const { data, isLoading, error } = useGridData(normalizedSettings);
 
 	const handleSelectView = (viewName: string) => {
+		if (!viewName) return;
+
+		if (viewName === "Default") {
+			reset();
+			return;
+		}
+
 		const view = Array.isArray(savedViews)
 			? savedViews.find((v: SavedView) => v.viewName === viewName)
 			: undefined;
+
 		if (view) {
-			setColumns(view.columns);
-			setFilters(view.filters);
+			setColumns(view.columns || DEFAULT_COLUMNS);
+			setFilters(view.filters || {});
 			setSort(normalizeSort(view.sort));
-			setPage(view.page);
-			setPageSize(view.pageSize);
+			setPage(view.page || 1);
+			setPageSize(view.pageSize || 10);
 			setViewName(view.viewName);
-			setLocalColumns(view.columns);
 		}
 	};
-
-	useEffect(() => {
-		setColumns(columns);
-	}, [columns, setColumns]);
 
 	return (
 		<div className="flex-1 overflow-y-auto max-h-[calc(100vh-220px)]">
 			<h1 className="text-3xl font-bold mb-4">Statistics Grid</h1>
+
 			<GridToolbar
 				data={data?.items ?? []}
 				columns={columns}
 				onSelectView={handleSelectView}
 				savedViews={savedViews ?? []}
 			/>
+
 			<SavedViews onSelectView={handleSelectView} />
+
 			<GridFilters columns={columns} />
+
 			<div className="shadow rounded">
 				<GridTable
 					columns={columns}
@@ -103,6 +109,7 @@ export default function StatisticsGridPage() {
 					error={error}
 				/>
 			</div>
+
 			<GridPagination total={data?.total ?? 0} />
 		</div>
 	);
