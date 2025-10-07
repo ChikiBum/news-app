@@ -268,4 +268,20 @@ export interface SavedView {
 	pageSize: number;
 }
 
+export interface ParseFeedRequest {
+	url: string;
+}
 
+export interface ParseFeedResponse {
+	news: Array<{
+		id: string;
+		site: string;
+		url: string;
+		title: string;
+	}>;
+}
+
+export interface FeedParseError {
+	message: string;
+	statusCode?: number;
+}
