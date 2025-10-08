@@ -1,10 +1,16 @@
 import type { PrebidBid } from "../types";
 
+let refreshTimer: NodeJS.Timeout | null = null;
+const refreshInterval =
+	Number(import.meta.env.VITE_ADS_REFRESH_INTERVAL) * 1000 || 30000;
+const autoRefreshEnabled = import.meta.env.VITE_ADS_AUTO_REFRESH !== "false";
+
 window.addEventListener("load", () => {
 	const BACKEND_URL =
 		import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000";
 	const PREBID_URL = import.meta.env.VITE_PREBID_URL ?? "http://localhost:4444";
 
+	console.log("PREBID_URL ", PREBID_URL);
 	const anonId: string = localStorage.getItem("anonId") ?? crypto.randomUUID();
 	localStorage.setItem("anonId", anonId);
 
@@ -45,6 +51,7 @@ window.addEventListener("load", () => {
 		"&modules=",
 	)}`;
 
+	console.log("prebidScriptUrl   :", prebidScriptUrl);
 
 	// const prebidScriptUrl =
 	// 	"http://localhost:4444/bundle?modules=adtelligentBidAdapter&modules=bidmaticBidAdapter&modules=obozhkoBidAdapter";
@@ -64,6 +71,9 @@ window.addEventListener("load", () => {
 
 	prebidScript.onload = () => {
 		runPrebid();
+		if (autoRefreshEnabled) {
+			startAutoRefresh();
+		}
 	};
 	document.head.appendChild(prebidScript);
 
@@ -231,5 +241,33 @@ window.addEventListener("load", () => {
 				}
 			});
 		}
+	}
+
+	function refreshAds() {
+		console.log("🔄 Refreshing ads...");
+
+		processedElements.clear();
+		const existingContainers = document.querySelectorAll(
+			`${adsContainerCode}[data-ad-id]`,
+		);
+		existingContainers.forEach((container) => {
+			container.innerHTML = "";
+			container.removeAttribute("data-ad-id");
+		});
+		runPrebid();
+	}
+
+	function startAutoRefresh() {
+		if (refreshTimer) {
+			clearInterval(refreshTimer);
+		}
+
+		console.log(
+			`⏰ Starting auto-refresh every ${refreshInterval / 1000} seconds`,
+		);
+
+		refreshTimer = setInterval(() => {
+			refreshAds();
+		}, refreshInterval);
 	}
 });
