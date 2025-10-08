@@ -246,10 +246,7 @@ window.addEventListener("load", () => {
 	function refreshAds() {
 		console.log("🔄 Refreshing ads...");
 
-		// Очищуємо попередню рекламу та processedElements
 		processedElements.clear();
-
-		// Очищуємо контейнери
 		const existingContainers = document.querySelectorAll(
 			`${adsContainerCode}[data-ad-id]`,
 		);
@@ -257,8 +254,6 @@ window.addEventListener("load", () => {
 			container.innerHTML = "";
 			container.removeAttribute("data-ad-id");
 		});
-
-		// Перезапускаємо процес
 		runPrebid();
 	}
 
@@ -274,13 +269,5 @@ window.addEventListener("load", () => {
 		refreshTimer = setInterval(() => {
 			refreshAds();
 		}, refreshInterval);
-	}
-
-	function stopAutoRefresh() {
-		if (refreshTimer) {
-			clearInterval(refreshTimer);
-			refreshTimer = null;
-			console.log("⏹️ Auto-refresh stopped");
-		}
 	}
 });
