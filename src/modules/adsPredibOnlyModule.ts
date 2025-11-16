@@ -17,6 +17,10 @@ window.addEventListener("load", () => {
 	const AD_SIZES: Array<[number, number]> = [
 		[300, 250],
 		[250, 250],
+		[728, 90],
+		[320, 100],
+		[336, 280],
+		[300, 600],
 	];
 	const bidders = [
 		{
